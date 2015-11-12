@@ -1,6 +1,9 @@
 package com.meshmix.meshmix;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -28,8 +33,11 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 
+import java.util.HashMap;
+import java.util.Locale;
+
 public class MainActivity extends Activity implements
-        PlayerNotificationCallback, ConnectionStateCallback {
+        PlayerNotificationCallback, ConnectionStateCallback, View.OnClickListener, TextToSpeech.OnInitListener {
 
     // TODO: Replace with your client ID
     private static final String CLIENT_ID = "2be599f474714676815ea0f27d854dea";
@@ -41,6 +49,9 @@ public class MainActivity extends Activity implements
     private static final int REQUEST_CODE = 1337;
 
     private Player mPlayer;
+
+    private int MY_DATA_CHECK_CODE = 0;
+    private TextToSpeech myTTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +66,50 @@ public class MainActivity extends Activity implements
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+        // STARTING TTS
+
+        //get a reference to the button element listed in the XML layout
+        Button speakButton = (Button)findViewById(R.id.speak);
+        //listen for clicks
+        speakButton.setOnClickListener(this);
+
+        //check for TTS data
+        Intent checkTTSIntent = new Intent();
+        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
     }
+
+    //respond to button clicks
+    public void onClick(View v) {
+        //get the text entered
+        EditText enteredText = (EditText)findViewById(R.id.enter);
+        String words = enteredText.getText().toString();
+        speakWords(words);
+    }
+
+    private void speakWords(String speech) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ttsGreater21(speech);
+        } else {
+            ttsUnder20(speech);
+        }
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        String utteranceId=this.hashCode() + "";
+        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -81,10 +135,29 @@ public class MainActivity extends Activity implements
                 });
             }
         }
+
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                myTTS = new TextToSpeech(this, this);
+            }
+            else {
+                Intent installTTSIntent = new Intent();
+                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installTTSIntent);
+            }
+        }
     }
 
-
-
+    public void onInit(int initStatus) {
+        if (initStatus == TextToSpeech.SUCCESS) {
+            // myTTS.setLanguage(Locale.US);
+            if (myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE) {
+                myTTS.setLanguage(Locale.US);
+            }
+        } else if (initStatus == TextToSpeech.ERROR) {
+            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
+        }
+    }
 
     public void setupPlayer() {
 
@@ -193,8 +266,9 @@ public class MainActivity extends Activity implements
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
+        myTTS.stop();
+        myTTS.shutdown();
         super.onDestroy();
     }
-
 
 }
