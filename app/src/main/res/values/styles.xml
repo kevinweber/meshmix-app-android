@@ -1,9 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material">
+<!--    <style name="AppTheme" parent="android:Theme.Material"> -->
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+<!--        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
@@ -13,11 +13,12 @@
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+-->
 
-    <style name="MeshMix" parent="@style/Theme.AppCompat.Light.NoActionBar" >
-        <item name="colorPrimary">@color/primary_material_light_1</item>
-        <item name="android:navigationBarColor">@color/black</item>
+    <style name="MeshMix2" parent="@android:style/Theme.Material.Light" >
+        <item name="android:navigationBarColor">@color/blue</item>
+        <item name="android:colorPrimary">@color/primary_material_light</item>
+        <item name="android:colorAccent">@color/accent_material_light</item>
         <item name="android:colorForeground">@color/foreground_material_light</item>
     </style>
-
 </resources>

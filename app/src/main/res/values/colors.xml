@@ -7,4 +7,9 @@
     <color name="accent_material_light">#48a1dd</color>
     <color name="black">#48a1dd</color>
     <color name="foreground_material_light">#000000</color>
+    <color name="primary_material_light">#48a1dd</color>
+    <color name="blue">#48a1dd</color>
+    <color name="primary_material_light_2">#48a1dd</color>
+    <color name="statusBarColor">#ffffff</color>
+    <color name="primary_text_material_light">#ffffff</color>
 </resources>
