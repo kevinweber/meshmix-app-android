@@ -37,4 +37,6 @@ dependencies {
 
     // This library handles music playback
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta11@aar'
+
+    compile 'com.android.volley:volley@jar'
 }
