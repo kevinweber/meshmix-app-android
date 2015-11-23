@@ -1,9 +1,13 @@
 package com.meshmix.meshmix;
 
+// TODO: Spotify logout
+// TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -30,7 +34,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         setContentView(R.layout.activity_main);
 
-        // @TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
         spotify.setupPlayer(this);
 
         news.loadNews();
@@ -65,9 +68,9 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
 
     void startSpeech() {
-        spotify.pause();
-
-        if (!myTTS.isSpeaking()) {
+        if (spotify.isPlaying()) {
+            spotify.interrupt();
+        } else {
             String words = news.getCurrentNews();
             speakWords(words);
         }
@@ -101,7 +104,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         } else {
             ttsUnder20(speech);
         }
-
     }
 
     @SuppressWarnings("deprecation")
@@ -142,16 +144,30 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
             configTTSVoice();
+
+            // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
+            myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                @Override
+                public void onDone(String utteranceId) {
+                    if (spotify.getPlayerStatus() == "interrupted") {
+                        spotify.resume();
+                    }
+                }
+
+                @Override
+                public void onError(String utteranceId) {
+                }
+
+                @Override
+                public void onStart(String utteranceId) {
+                }
+            });
+
+
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-
-
-
 
 
     @Override

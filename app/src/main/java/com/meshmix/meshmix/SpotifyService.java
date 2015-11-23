@@ -19,6 +19,7 @@ import com.spotify.sdk.android.player.*;
 public class SpotifyService extends Activity implements PlayerNotificationCallback, ConnectionStateCallback {
     private static final String PLAYER_OFF = "off";
     private static final String PLAYER_PAUSED = "paused";
+    private static final String PLAYER_INTERRUPTED = "interrupted";
     private static final String PLAYER_ON = "on";
     private static final String PLAYER_RESUMED = "resumed";
     private static final String PLAYER_SKIPPED = "skipped";
@@ -50,13 +51,16 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
     }
 
     boolean isPlaying() {
-        if (getPlayerStatus() == PLAYER_ON
-                | getPlayerStatus() == PLAYER_RESUMED
-                | getPlayerStatus() == PLAYER_SKIPPED) {
-            return true;
-        } else {
+        if (getPlayerStatus() == PLAYER_OFF | getPlayerStatus() == PLAYER_PAUSED) {
             return false;
+        } else {
+            return true;
         }
+    }
+
+    void interrupt() {
+        pause();
+        setPlayerStatus(PLAYER_INTERRUPTED);
     }
 
     String getPlayerStatus() {
@@ -109,7 +113,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
                 play();
             }
 
-            public void play() {
+            void play() {
                 setPlayerStatus(PLAYER_ON);
                 // TODO: Add "Choose playlist" feature (or something similar)
                 mPlayer.play("spotify:user:spotify:playlist:2PXdUld4Ueio2pHcB6sM8j");
@@ -129,11 +133,6 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             public void onClick(View v) {
                 resume();
             }
-
-            public void resume() {
-                setPlayerStatus(PLAYER_RESUMED);
-                mPlayer.resume();
-            }
         });
 
         final Button button_prev = (Button) activity.findViewById(R.id.prev);
@@ -142,7 +141,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
                 prev();
             }
 
-            public void prev() {
+            void prev() {
                 setPlayerStatus(PLAYER_SKIPPED);
                 mPlayer.skipToPrevious();
             }
@@ -154,7 +153,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
                 next();
             }
 
-            public void next() {
+            void next() {
                 setPlayerStatus(PLAYER_SKIPPED);
                 mPlayer.skipToNext();
             }
@@ -165,6 +164,11 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
     void pause() {
         setPlayerStatus(PLAYER_PAUSED);
         mPlayer.pause();
+    }
+
+    void resume() {
+        setPlayerStatus(PLAYER_RESUMED);
+        mPlayer.resume();
     }
 
 
