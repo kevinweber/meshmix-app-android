@@ -7,7 +7,6 @@ import java.io.IOException;
 
 
 class APIService extends AsyncTask<String, Void, String> {
-
     private static String access_token = "R2lT3tDJvBVN2pMXONw6FvvpLl1SzwNELgDT0wfI";
 
     static String getAccessToken() {

@@ -15,57 +15,25 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerNotificationCallback;
-import com.spotify.sdk.android.player.PlayerState;
-
 import java.util.HashMap;
 import java.util.Locale;
 
-public class MainActivity extends Activity implements
-        PlayerNotificationCallback, ConnectionStateCallback, TextToSpeech.OnInitListener {
-
-    // Spotify setup
-    private static final String CLIENT_ID = "2be599f474714676815ea0f27d854dea";
-    private static final String REDIRECT_URI = "meshmix://callback";
-
-    // Request code that will be passed together with authentication result to the onAuthenticationResult callback
-    // Can be any integer
-    private static final int REQUEST_CODE = 1337;
-
-    private Player mPlayer;
-
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
 
     private NewsService news = new NewsService();
-
+    private SpotifyService spotify = new SpotifyService();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        setupPlayer();
+        // @TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
+        spotify.setupPlayer(this);
 
-        // @TODO: Load news. Store them. Use them with TTS. Alternative: Load news and – when loaded – start TTS directly.
         news.loadNews();
-
-
-
-
-        AuthenticationRequest.Builder builder =
-                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
         // STARTING TTS
 
@@ -138,24 +106,8 @@ public class MainActivity extends Activity implements
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                    @Override
-                    public void onInitialized(Player player) {
-                        mPlayer.addConnectionStateCallback(MainActivity.this);
-                        mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                        mPlayer.setShuffle(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
-            }
+        if (requestCode == spotify.getRequestCode()) {
+            spotify.setupSpotify(resultCode, intent, this);
         }
 
         if (requestCode == MY_DATA_CHECK_CODE) {
@@ -178,117 +130,15 @@ public class MainActivity extends Activity implements
         }
     }
 
-    // @TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
-    public void setupPlayer() {
-
-        /////////////////////////////////
-        //// CONTROL PLAYER: BUTTONS
-        final Button button_play= (Button) findViewById(R.id.play);
-        button_play.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                play();
-            }
-            public void play() {
-                mPlayer.play("spotify:user:spotify:playlist:2PXdUld4Ueio2pHcB6sM8j");
-                mPlayer.setShuffle(true);
-            }
-        });
-
-        final Button button_pause = (Button) findViewById(R.id.pause);
-        button_pause.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                pause();
-            }
-            public void pause() {
-                mPlayer.pause();
-            }
-        });
-
-        final Button button_resume = (Button) findViewById(R.id.resume);
-        button_resume.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                resume();
-            }
-            public void resume() {
-                mPlayer.resume();
-            }
-        });
-
-        final Button button_prev = (Button) findViewById(R.id.prev);
-        button_prev.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                prev();
-            }
-
-            public void prev() {
-                mPlayer.skipToPrevious();
-            }
-        });
-
-        final Button button_next = (Button) findViewById(R.id.next);
-        button_next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                next();
-            }
-
-            public void next() {
-                mPlayer.skipToNext();
-            }
-        });
-    }
 
 
 
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Throwable error) {
-        Log.d("MainActivity", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
-
-    @Override
-    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
-        switch (eventType) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(ErrorType errorType, String errorDetails) {
-        Log.d("MainActivity", "Playback error received: " + errorType.name());
-        switch (errorType) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
 
 
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        Spotify.destroyPlayer(this);
+        //Spotify.destroyPlayer(this);
         myTTS.stop();
         myTTS.shutdown();
         super.onDestroy();
