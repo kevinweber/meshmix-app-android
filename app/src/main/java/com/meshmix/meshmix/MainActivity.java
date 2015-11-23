@@ -3,12 +3,7 @@ package com.meshmix.meshmix;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -16,11 +11,7 @@ import android.view.MenuItem;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -29,7 +20,6 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
@@ -40,11 +30,10 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements
-        PlayerNotificationCallback, ConnectionStateCallback, View.OnClickListener, TextToSpeech.OnInitListener {
+        PlayerNotificationCallback, ConnectionStateCallback, TextToSpeech.OnInitListener {
 
-    // TODO: Replace with your client ID
+    // Spotify setup
     private static final String CLIENT_ID = "2be599f474714676815ea0f27d854dea";
-    // TODO: Replace with your redirect URI
     private static final String REDIRECT_URI = "meshmix://callback";
 
     // Request code that will be passed together with authentication result to the onAuthenticationResult callback
@@ -56,13 +45,21 @@ public class MainActivity extends Activity implements
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
 
-    @Override
+    private NewsService news = new NewsService();
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
         setupPlayer();
+
+        // @TODO: Load news. Store them. Use them with TTS. Alternative: Load news and – when loaded – start TTS directly.
+        news.loadNews();
+
+
+
 
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -73,10 +70,15 @@ public class MainActivity extends Activity implements
 
         // STARTING TTS
 
-        //get a reference to the button element listed in the XML layout
-        Button speakButton = (Button)findViewById(R.id.speak);
-        //listen for clicks
-        speakButton.setOnClickListener(this);
+        // Ret a reference to the button element listed in the XML layout
+        final Button speakButton = (Button)findViewById(R.id.speak);
+        // Listen for clicks
+        speakButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleSpeakButtonClicks(v);
+            }
+        });
+
 
         //check for TTS data
         Intent checkTTSIntent = new Intent();
@@ -84,12 +86,32 @@ public class MainActivity extends Activity implements
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
     }
 
-    //respond to button clicks
-    public void onClick(View v) {
+
+
+    //Respond to button clicks
+    public void handleSpeakButtonClicks(View v) {
         //get the text entered
-        EditText enteredText = (EditText)findViewById(R.id.enter);
-        String words = enteredText.getText().toString();
-        speakWords(words);
+        // EditText enteredText = (EditText)findViewById(R.id.enter);
+        // String words = enteredText.getText().toString();
+        if (myTTS.isSpeaking()) {
+            myTTS.stop();
+        } else {
+            String words = news.getCurrentNews();
+            speakWords(words);
+        }
+    }
+
+    private void setupTTSVoice() {
+        float pitch = 0.9f;
+        float speechRate = 0.9f;
+
+        // myTTS.setLanguage(Locale.US);
+        if (myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE) {
+            myTTS.setLanguage(Locale.US);
+        }
+
+        myTTS.setPitch(pitch);
+        myTTS.setSpeechRate(speechRate);
     }
 
     private void speakWords(String speech) {
@@ -154,10 +176,7 @@ public class MainActivity extends Activity implements
 
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
-            // myTTS.setLanguage(Locale.US);
-            if (myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE) {
-                myTTS.setLanguage(Locale.US);
-            }
+            setupTTSVoice();
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
@@ -215,6 +234,7 @@ public class MainActivity extends Activity implements
             public void onClick(View v) {
                 next();
             }
+
             public void next() {
                 mPlayer.skipToNext();
             }
@@ -296,7 +316,14 @@ public class MainActivity extends Activity implements
                 Log.d("MainActivity", "Clicked on 'action_settings");
                 return true;
             case R.id.feedback_link:
-                Log.d("MainActivity", "Clicked on 'feedback_link");
+
+
+                // TESTING REQUESTS with class HttpRequestService
+                /* HttpRequestService client = new HttpRequestService();
+                client.execute("http://unlazy.de/news"); */
+
+
+                Log.d("MainActivity", "Clicked on 'feedback_link' and print text: " + news.getCurrentNews());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
