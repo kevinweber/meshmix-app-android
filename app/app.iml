@@ -93,7 +93,6 @@
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="1_okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="spotify-player-1.0.0-beta11" level="project" />
-    <orderEntry type="library" exported="" name="volley" level="project" />
     <orderEntry type="library" exported="" name="spotify-auth-1.0.0-beta11" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />

@@ -89,9 +89,6 @@ public class MainActivity extends Activity implements
 
     //Respond to button clicks
     public void handleSpeakButtonClicks(View v) {
-        //get the text entered
-        // EditText enteredText = (EditText)findViewById(R.id.enter);
-        // String words = enteredText.getText().toString();
         if (myTTS.isSpeaking()) {
             myTTS.stop();
         } else {

@@ -9,14 +9,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main" tools:context=".MainActivity">
 
-    <TextView android:id="@+id/intro"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Enter some text:"
-        android:layout_alignTop="@+id/linearLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -25,11 +17,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-
-        <EditText android:id="@+id/enter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
 
         <Button android:id="@+id/speak"
             android:layout_width="wrap_content"
