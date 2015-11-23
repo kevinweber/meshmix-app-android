@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -313,17 +312,10 @@ public class MainActivity extends Activity implements
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Log.d("MainActivity", "Clicked on 'action_settings");
+                Log.d("MainActivity", "Clicked on 'action_settings'");
                 return true;
             case R.id.feedback_link:
-
-
-                // TESTING REQUESTS with class HttpRequestService
-                /* HttpRequestService client = new HttpRequestService();
-                client.execute("http://unlazy.de/news"); */
-
-
-                Log.d("MainActivity", "Clicked on 'feedback_link' and print text: " + news.getCurrentNews());
+                Log.d("MainActivity", "Clicked on 'feedback_link'");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
