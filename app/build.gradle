@@ -39,4 +39,5 @@ dependencies {
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta11@aar'
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

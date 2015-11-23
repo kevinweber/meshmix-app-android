@@ -2,21 +2,40 @@ package com.meshmix.meshmix;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.*;
 
 public class SpotifyService extends Activity implements PlayerNotificationCallback, ConnectionStateCallback {
+    private static final String PLAYER_OFF = "off";
+    private static final String PLAYER_PAUSED = "paused";
+    private static final String PLAYER_ON = "on";
+    private static final String PLAYER_RESUMED = "resumed";
+    private static final String PLAYER_SKIPPED = "skipped";
+
     // Request code that will be passed together with authentication result to the onAuthenticationResult callback (can be any integer)
     private static final int REQUEST_CODE = 1337;
     private static final String CLIENT_ID = "2be599f474714676815ea0f27d854dea";
     private static final String REDIRECT_URI = "meshmix://callback";
+
     private Player mPlayer;
+    private static String playerStatus = PLAYER_OFF;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
 
     int getRequestCode() {
         return REQUEST_CODE;
@@ -30,12 +49,29 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
         return REDIRECT_URI;
     }
 
+    boolean isPlaying() {
+        if (getPlayerStatus() == PLAYER_ON
+                | getPlayerStatus() == PLAYER_RESUMED
+                | getPlayerStatus() == PLAYER_SKIPPED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    String getPlayerStatus() {
+        return playerStatus;
+    }
+
+    private void setPlayerStatus(String status) {
+        playerStatus = status;
+    }
 
     void setupSpotify(int resultCode, Intent intent, Activity activity) {
         AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
         if (response.getType() == AuthenticationResponse.Type.TOKEN) {
             Config playerConfig = new Config(activity, response.getAccessToken(), CLIENT_ID);
-            mPlayer = com.spotify.sdk.android.player.Spotify.getPlayer(playerConfig, activity, new Player.InitializationObserver() {
+            mPlayer = Spotify.getPlayer(playerConfig, activity, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized(Player player) {
                     mPlayer.addConnectionStateCallback(SpotifyService.this);
@@ -72,7 +108,10 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             public void onClick(View v) {
                 play();
             }
+
             public void play() {
+                setPlayerStatus(PLAYER_ON);
+                // TODO: Add "Choose playlist" feature (or something similar)
                 mPlayer.play("spotify:user:spotify:playlist:2PXdUld4Ueio2pHcB6sM8j");
                 mPlayer.setShuffle(true);
             }
@@ -83,9 +122,6 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             public void onClick(View v) {
                 pause();
             }
-            public void pause() {
-                mPlayer.pause();
-            }
         });
 
         final Button button_resume = (Button) activity.findViewById(R.id.resume);
@@ -93,7 +129,9 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             public void onClick(View v) {
                 resume();
             }
+
             public void resume() {
+                setPlayerStatus(PLAYER_RESUMED);
                 mPlayer.resume();
             }
         });
@@ -105,6 +143,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             }
 
             public void prev() {
+                setPlayerStatus(PLAYER_SKIPPED);
                 mPlayer.skipToPrevious();
             }
         });
@@ -116,9 +155,16 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
             }
 
             public void next() {
+                setPlayerStatus(PLAYER_SKIPPED);
                 mPlayer.skipToNext();
             }
         });
+    }
+
+
+    void pause() {
+        setPlayerStatus(PLAYER_PAUSED);
+        mPlayer.pause();
     }
 
 
@@ -172,5 +218,54 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "SpotifyService Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.meshmix.meshmix/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "SpotifyService Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.meshmix.meshmix/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }

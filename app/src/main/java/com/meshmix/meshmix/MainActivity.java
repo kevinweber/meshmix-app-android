@@ -55,17 +55,34 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
 
 
-    //Respond to button clicks
-    public void handleSpeakButtonClicks(View v) {
+    // Respond to button clicks
+    void handleSpeakButtonClicks(View v) {
         if (myTTS.isSpeaking()) {
-            myTTS.stop();
+            stopSpeech();
         } else {
+            startSpeech();
+        }
+    }
+
+    void startSpeech() {
+        spotify.pause();
+
+        if (!myTTS.isSpeaking()) {
             String words = news.getCurrentNews();
             speakWords(words);
         }
     }
 
-    private void setupTTSVoice() {
+    void stopSpeech() {
+        if (myTTS.isSpeaking()) {
+            myTTS.stop();
+        }
+    }
+
+
+
+
+    private void configTTSVoice() {
         float pitch = 0.9f;
         float speechRate = 0.9f;
 
@@ -96,7 +113,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void ttsGreater21(String text) {
-        String utteranceId=this.hashCode() + "";
+        String utteranceId = this.hashCode() + "";
         myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
@@ -124,11 +141,13 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
-            setupTTSVoice();
+            configTTSVoice();
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
+
+
 
 
 
