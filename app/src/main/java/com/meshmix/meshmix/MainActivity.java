@@ -199,6 +199,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             case R.id.feedback_link:
                 Log.d("MainActivity", "Clicked on 'feedback_link'");
                 return true;
+            case R.id.logout_link:
+                spotify.logout(spotify);
+                Log.d("MainActivity", "Logged out");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

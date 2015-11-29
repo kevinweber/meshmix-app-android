@@ -5,4 +5,6 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/feedback_link" android:title="@string/feedback_link"
         android:orderInCategory="150" app:showAsAction="never" />
+    <item android:id="@+id/logout_link" android:title="@string/logout_link"
+        android:orderInCategory="150" app:showAsAction="never" />
 </menu>

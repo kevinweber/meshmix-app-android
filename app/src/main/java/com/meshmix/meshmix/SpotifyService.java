@@ -16,6 +16,8 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.*;
 
+import java.util.concurrent.TimeUnit;
+
 public class SpotifyService extends Activity implements PlayerNotificationCallback, ConnectionStateCallback {
     private static final String PLAYER_OFF = "off";
     private static final String PLAYER_PAUSED = "paused";
@@ -75,7 +77,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
         AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
         if (response.getType() == AuthenticationResponse.Type.TOKEN) {
             Config playerConfig = new Config(activity, response.getAccessToken(), CLIENT_ID);
-            mPlayer = Spotify.getPlayer(playerConfig, activity, new Player.InitializationObserver() {
+            mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized(Player player) {
                     mPlayer.addConnectionStateCallback(SpotifyService.this);
@@ -85,7 +87,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
 
                 @Override
                 public void onError(Throwable throwable) {
-                    Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+                    Log.e("SpotifyService", "Could not initialize player: " + throwable.getMessage());
                 }
             });
         }
@@ -95,6 +97,13 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
     public void setupPlayer(Activity activity) {
         authenticate(activity);
         setupPlayerControls(activity);
+    }
+
+    public void logout(Activity activity) {
+        mPlayer.logout();
+
+        AuthenticationClient.logout(activity);
+        AuthenticationClient.logout(this);
     }
 
     private void authenticate(Activity activity) {
@@ -174,32 +183,32 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
 
     @Override
     public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
+        Log.d("SpotifyService", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.d("SpotifyService", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable error) {
-        Log.d("MainActivity", "Login failed");
+        Log.d("SpotifyService", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.d("SpotifyService", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
+        Log.d("SpotifyService", "Received connection message: " + message);
     }
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
+        Log.d("SpotifyService", "Playback event received: " + eventType.name());
         switch (eventType) {
             // Handle event type as necessary
             default:
@@ -209,7 +218,7 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
 
     @Override
     public void onPlaybackError(ErrorType errorType, String errorDetails) {
-        Log.d("MainActivity", "Playback error received: " + errorType.name());
+        Log.d("SpotifyService", "Playback error received: " + errorType.name());
         switch (errorType) {
             // Handle error type as necessary
             default:
@@ -221,6 +230,12 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
+        try {
+            Spotify.awaitDestroyPlayer(this, 2000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ie) {
+            Log.d("SpotifyService", "InterruptedException onDestroy: " + ie);
+        }
+
         super.onDestroy();
     }
 

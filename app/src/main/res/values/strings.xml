@@ -2,4 +2,5 @@
     <string name="app_name">MeshMix</string>
     <string name="action_settings">Settings</string>
     <string name="feedback_link">Provide Feedback</string>
+    <string name="logout_link">Logout</string>
 </resources>
