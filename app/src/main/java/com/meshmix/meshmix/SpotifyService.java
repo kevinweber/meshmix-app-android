@@ -104,6 +104,8 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
 
         AuthenticationClient.logout(activity);
         AuthenticationClient.logout(this);
+
+//        recreate();
     }
 
     private void authenticate(Activity activity) {
@@ -229,9 +231,9 @@ public class SpotifyService extends Activity implements PlayerNotificationCallba
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        Spotify.destroyPlayer(this);
+        Spotify.destroyPlayer(mPlayer);
         try {
-            Spotify.awaitDestroyPlayer(this, 2000, TimeUnit.MILLISECONDS);
+            Spotify.awaitDestroyPlayer(mPlayer, 2000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ie) {
             Log.d("SpotifyService", "InterruptedException onDestroy: " + ie);
         }

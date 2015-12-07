@@ -1,11 +1,16 @@
 package com.meshmix.meshmix;
 
-// TODO: Spotify logout
+// TODO (tbd): Remove all Spotify-related code
+// TODO: Spotify logout - don't show player anymore but login screen
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.view.MenuInflater;
@@ -19,20 +24,33 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.HashMap;
 import java.util.Locale;
 
-public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
 
     private NewsService news = new NewsService();
     private SpotifyService spotify = new SpotifyService();
 
+    private AudioManager audioManager;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        initAudioManager();
 
         spotify.setupPlayer(this);
 
@@ -41,7 +59,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         // STARTING TTS
 
         // Ret a reference to the button element listed in the XML layout
-        final Button speakButton = (Button)findViewById(R.id.speak);
+        final Button speakButton = (Button) findViewById(R.id.speak);
         // Listen for clicks
         speakButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -49,13 +67,102 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             }
         });
 
-
         //check for TTS data
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    private void initAudioManager() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    }
+
+
+    /**
+     * Just "duck" other apps in the first step so that the switch is not to abrupt.
+     * In the second step, pause them totally (gainFullTransient()).
+     */
+    void pauseOtherApps() {
+        if (audioManager.isMusicActive()) {
+            Log.d("MainActivity", "Music is active");
+            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+
+            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                // could not get audio focus.
+                Log.d("MainActivity", "could not get audio focus");
+            } else {
+                gainFullTransient();
+            }
+        } else {
+            Log.d("MainActivity", "Music is not active");
+        }
+    }
+
+    void gainFullTransient() {
+        int delayTTS = 2000;
+
+        final AudioManager.OnAudioFocusChangeListener context = this;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int result = audioManager.requestAudioFocus(context, AudioManager.STREAM_MUSIC,
+                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    // could not get audio focus.
+                    Log.d("MainActivity", "postDelayed; could not get audio focus");
+                }
+            }
+        }, delayTTS);
+    }
+
+    /**
+     * TODO: Handle different scenarios when the app's focus changes
+     * @param focusChange
+     */
+    public void onAudioFocusChange(int focusChange) {
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                // resume playback
+//                if (audioManager == null) initAudioManager();
+//                else if (!audioManager.isPlaying()) audioManager.start();
+//                audioManager.setVolume(1.0f, 1.0f);
+//                break;
+
+                Log.d("MainActivity", "1");
+
+
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Lost focus for an unbounded amount of time: stop playback and release media player
+//                if (audioManager.isPlaying()) audioManager.stop();
+//                audioManager.release();
+//                audioManager = null;
+//                break;
+
+                Log.d("MainActivity", "2");
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Lost focus for a short time, but we have to stop
+                // playback. We don't release the media player because playback
+                // is likely to resume
+//                if (audioManager.isPlaying()) audioManager.pause();
+//                break;
+
+                Log.d("MainActivity", "3");
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Lost focus for a short time, but it's ok to keep playing
+                // at an attenuated level
+//                if (audioManager.isPlaying()) audioManager.setVolume(0.1f, 0.1f);
+//                break;
+
+                Log.d("MainActivity", "4");
+        }
+    }
 
 
     // Respond to button clicks
@@ -68,6 +175,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
 
     void startSpeech() {
+        pauseOtherApps();
+
         if (spotify.isPlaying()) {
             spotify.interrupt();
         } else {
@@ -79,10 +188,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     void stopSpeech() {
         if (myTTS.isSpeaking()) {
             myTTS.stop();
+
+            audioManager.abandonAudioFocus(this);
         }
     }
-
-
 
 
     private void configTTSVoice() {
@@ -90,7 +199,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         float speechRate = 0.9f;
 
         // myTTS.setLanguage(Locale.US);
-        if (myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE) {
+        if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE) {
             myTTS.setLanguage(Locale.US);
         }
 
@@ -132,8 +241,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 myTTS = new TextToSpeech(this, this);
-            }
-            else {
+            } else {
                 Intent installTTSIntent = new Intent();
                 installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
                 startActivity(installTTSIntent);
@@ -174,8 +282,16 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         //Spotify.destroyPlayer(this);
-        myTTS.stop();
-        myTTS.shutdown();
+        if (audioManager != null) {
+//            audioManager.release();
+            audioManager.abandonAudioFocus(this);
+            audioManager = null;
+        }
+        if (myTTS != null) {
+            myTTS.stop();
+            myTTS.shutdown();
+            myTTS = null;
+        }
         super.onDestroy();
     }
 
@@ -208,4 +324,43 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.meshmix.meshmix/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.meshmix.meshmix/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }
