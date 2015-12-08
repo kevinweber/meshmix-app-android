@@ -1,7 +1,5 @@
 package com.meshmix.meshmix;
 
-// TODO (tbd): Remove all Spotify-related code
-// TODO: Spotify logout - don't show player anymore but login screen
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
 
 import android.annotation.TargetApi;
@@ -36,7 +34,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private TextToSpeech myTTS;
 
     private NewsService news = new NewsService();
-    private SpotifyService spotify = new SpotifyService();
 
     private AudioManager audioManager;
     /**
@@ -52,7 +49,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         setContentView(R.layout.activity_main);
         initAudioManager();
 
-        spotify.setupPlayer(this);
 
         news.loadNews();
 
@@ -177,12 +173,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     void startSpeech() {
         pauseOtherApps();
 
-        if (spotify.isPlaying()) {
-            spotify.interrupt();
-        } else {
-            String words = news.getCurrentNews();
-            speakWords(words);
-        }
+        String words = news.getCurrentNews();
+        speakWords(words);
     }
 
     void stopSpeech() {
@@ -233,11 +225,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        // Check if result comes from the correct activity
-        if (requestCode == spotify.getRequestCode()) {
-            spotify.setupSpotify(resultCode, intent, this);
-        }
-
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 myTTS = new TextToSpeech(this, this);
@@ -257,9 +244,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
             myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                 @Override
                 public void onDone(String utteranceId) {
-                    if (spotify.getPlayerStatus() == "interrupted") {
-                        spotify.resume();
-                    }
                 }
 
                 @Override
@@ -281,7 +265,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        //Spotify.destroyPlayer(this);
         if (audioManager != null) {
 //            audioManager.release();
             audioManager.abandonAudioFocus(this);
@@ -316,8 +299,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 Log.d("MainActivity", "Clicked on 'feedback_link'");
                 return true;
             case R.id.logout_link:
-                spotify.logout(spotify);
-                Log.d("MainActivity", "Logged out");
+                Log.d("MainActivity", "Clicked on 'logout_link'");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

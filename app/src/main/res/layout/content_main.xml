@@ -24,51 +24,6 @@
             android:text="Speak"
             />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="play"
-            android:id="@+id/play"
-            android:clickable="true"
-            android:onClick="play" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="prev"
-                android:id="@+id/prev"
-                android:clickable="true"
-                android:onClick="prev" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="pause"
-                android:id="@+id/pause"
-                android:clickable="true"
-                android:onClick="pause" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="resume"
-                android:id="@+id/resume"
-                android:clickable="true"
-                android:onClick="resume" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="next"
-                android:id="@+id/next"
-                android:clickable="true"
-                android:onClick="next" />
-        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
