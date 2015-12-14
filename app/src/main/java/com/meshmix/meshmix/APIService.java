@@ -1,5 +1,6 @@
 package com.meshmix.meshmix;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 
 class APIService extends AsyncTask<String, Void, String> {
     private static String access_token = "R2lT3tDJvBVN2pMXONw6FvvpLl1SzwNELgDT0wfI";
+    private Context context;
 
     static String getAccessToken() {
         return access_token;
@@ -15,6 +17,10 @@ class APIService extends AsyncTask<String, Void, String> {
 
     static void setAccessToken(String string) {
         access_token = string;
+    }
+
+    APIService(Context context) {
+        this.context = context;
     }
 
     protected String doInBackground(String... strings) {
@@ -34,6 +40,6 @@ class APIService extends AsyncTask<String, Void, String> {
         super.onPostExecute(s);
 
         // Do something as soon as you have response...
-        new NewsService().setCurrentNews(s);
+        new NewsService(context).setCurrentNews(s);
     }
 }

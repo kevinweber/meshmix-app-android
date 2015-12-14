@@ -33,9 +33,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
 
-    private NewsService news = new NewsService();
+    private NewsService news = new NewsService(this);
+    private TTSService ttsService = new TTSService(this, news);
 
     private AudioManager audioManager;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -49,10 +51,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         setContentView(R.layout.activity_main);
         initAudioManager();
 
-
         news.loadNews();
+        news.scheduleAlarm();
 
         // STARTING TTS
+//        ttsService.setupTTS();
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);
