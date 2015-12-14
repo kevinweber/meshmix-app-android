@@ -34,8 +34,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private TextToSpeech myTTS;
 
     private NewsService news = new NewsService(this);
-    private TTSService ttsService = new TTSService(this, news);
-
     private AudioManager audioManager;
 
     /**
@@ -53,9 +51,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
         news.loadNews();
         news.scheduleAlarm();
-
-        // STARTING TTS
-//        ttsService.setupTTS();
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);
