@@ -3,11 +3,7 @@ package com.meshmix.meshmix;
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -39,8 +35,6 @@ public class MainActivity extends Activity {
 
     }
 
-
-
     // Respond to button clicks
     void handleSpeakButtonClicks(View v) {
         ttsservice.handleSpeech();
@@ -49,9 +43,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        // VERY IMPORTANT! This must always be called or else you will leak resources
-        new NewsService(this).cancelSchedule();
-
         if (ttsservice != null) {
             ttsservice.destroy();
         }

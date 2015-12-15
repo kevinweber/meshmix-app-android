@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 
 /**
- * This class manages available audio streams on the user's device.
+ * This class manages audio streams on the user's device to play fine with this app.
  */
 public class AudioManagerService implements AudioManager.OnAudioFocusChangeListener {
     private static AudioManager audioManager;

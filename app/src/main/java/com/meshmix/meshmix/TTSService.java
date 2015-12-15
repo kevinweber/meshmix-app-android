@@ -136,6 +136,10 @@ public class TTSService implements TextToSpeech.OnInitListener {
             audioManager.destroy();
             audioManager = null;
         }
+        if (news != null) {
+            news.destroy();
+            news = null;
+        }
 
     }
 }

@@ -80,4 +80,12 @@ public class NewsService {
     protected static void setCurrentNews(String currentNews) {
         CurrentNews = currentNews;
     }
+
+    protected void destroy() {
+        if (alarmManager != null) {
+            alarmManager.cancel(alarmIntent);
+            alarmManager = null;
+            alarmIntent = null;
+        }
+    }
 }
