@@ -1,24 +1,25 @@
 package com.meshmix.meshmix;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * This class handles everything directly related to text to speech.
+ * For example, it offers methods that allow the playback of news.
+ */
 public class TTSService implements TextToSpeech.OnInitListener {
-    private int MY_DATA_CHECK_CODE = 0;
     private static TextToSpeech myTTS;
-    private static NewsService news;
+    private NewsService news;
+    private AudioManagerService audioManager;
     private Context context;
 
     TTSService(Context context) {
@@ -32,7 +33,9 @@ public class TTSService implements TextToSpeech.OnInitListener {
             news.loadNews();
             news.scheduleNews();
         }
-
+        if (audioManager == null) {
+            audioManager = new AudioManagerService(context);
+        }
     }
 
 
@@ -47,7 +50,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
     }
 
     protected void startSpeech() {
-//        pauseOtherApps();
+        audioManager.pauseOtherApps();
 
         String words = news.getCurrentNews();
         speakWords(words);
@@ -57,7 +60,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
         if (myTTS.isSpeaking()) {
             myTTS.stop();
 
-//            audioManager.abandonAudioFocus(this);
+            audioManager.abandonAudioFocus();
         }
     }
 
@@ -129,5 +132,10 @@ public class TTSService implements TextToSpeech.OnInitListener {
             myTTS.shutdown();
             myTTS = null;
         }
+        if (audioManager != null) {
+            audioManager.destroy();
+            audioManager = null;
+        }
+
     }
 }
