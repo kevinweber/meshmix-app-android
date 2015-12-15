@@ -7,7 +7,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+
+/**
+ * TODO: Use LocalBroadcastManager instead of BroadcastReceiver expecially for performance reasons
+ * (http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
+ */
 
 /**
  * Here you find everything related to Text to Speech (TTS)
@@ -17,14 +21,14 @@ public class NewsService {
 
     private Context context;
 
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
+    private static AlarmManager alarmManager;
+    private static PendingIntent alarmIntent;
 
-    NewsService(Context context) {
+    protected NewsService(Context context) {
         this.context = context;
     }
 
-    void loadNews() {
+    protected void loadNews() {
         String access_token = new APIService(context).getAccessToken();
 
         new APIService(context).execute("http://unlazy.de/news", access_token);
@@ -34,7 +38,7 @@ public class NewsService {
     /**
      * TODO: Implement "autoplay news every hour" feature
      */
-    void scheduleAlarm() {
+    protected void scheduleNews() {
         // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
         // we fetch  the current time in milliseconds and added 1 day time
         // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
@@ -42,7 +46,7 @@ public class NewsService {
 
 
         alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmReceiver.class);
+        Intent intent = new Intent(context, NewstimeReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         // Set the alarm to start at 8:30 a.m.
@@ -53,24 +57,27 @@ public class NewsService {
 
         // Fire alarm exact once; repeat firing by implementing this function into receiver
         alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
-                1000 * 10, alarmIntent);
+                1000 * 12, alarmIntent);
 
         // With setInexactRepeating(), you have to use one of the AlarmManager interval
-// constants--in this case, AlarmManager.INTERVAL_DAY.
+        // constants--in this case, AlarmManager.INTERVAL_DAY.
         // Use inexact repeating to drain on the battery.
-        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
+//        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
+//                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
         Log.d("MainActivity", "Alarm set");
 
     }
 
+    protected void cancelSchedule() {
+        alarmManager.cancel(alarmIntent);
+    }
 
-    static String getCurrentNews() {
+    protected static String getCurrentNews() {
         return CurrentNews;
     }
 
-    static void setCurrentNews(String currentNews) {
+    protected static void setCurrentNews(String currentNews) {
         CurrentNews = currentNews;
     }
 }

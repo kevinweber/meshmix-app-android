@@ -29,12 +29,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class MainActivity extends Activity implements TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
-    private int MY_DATA_CHECK_CODE = 0;
-    private TextToSpeech myTTS;
-
-    private NewsService news = new NewsService(this);
+public class MainActivity extends Activity implements AudioManager.OnAudioFocusChangeListener {
     private AudioManager audioManager;
+
+    private TTSService ttsservice;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -43,14 +41,14 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private GoogleApiClient client;
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         initAudioManager();
 
-        news.loadNews();
-        news.scheduleAlarm();
+        ttsservice = new TTSService(this);
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);
@@ -60,11 +58,6 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 handleSpeakButtonClicks(v);
             }
         });
-
-        //check for TTS data
-        Intent checkTTSIntent = new Intent();
-        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -161,117 +154,113 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     // Respond to button clicks
     void handleSpeakButtonClicks(View v) {
-        if (myTTS.isSpeaking()) {
-            stopSpeech();
-        } else {
-            startSpeech();
-        }
+        ttsservice.handleSpeech();
     }
-
-    void startSpeech() {
-        pauseOtherApps();
-
-        String words = news.getCurrentNews();
-        speakWords(words);
-    }
-
-    void stopSpeech() {
-        if (myTTS.isSpeaking()) {
-            myTTS.stop();
-
-            audioManager.abandonAudioFocus(this);
-        }
-    }
-
-
-    private void configTTSVoice() {
-        float pitch = 0.9f;
-        float speechRate = 0.9f;
-
-        // myTTS.setLanguage(Locale.US);
-        if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE) {
-            myTTS.setLanguage(Locale.US);
-        }
-
-        myTTS.setPitch(pitch);
-        myTTS.setSpeechRate(speechRate);
-    }
-
-    private void speakWords(String speech) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ttsGreater21(speech);
-        } else {
-            ttsUnder20(speech);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private void ttsUnder20(String text) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
-        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void ttsGreater21(String text) {
-        String utteranceId = this.hashCode() + "";
-        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        if (requestCode == MY_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                myTTS = new TextToSpeech(this, this);
-            } else {
-                Intent installTTSIntent = new Intent();
-                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installTTSIntent);
-            }
-        }
-    }
-
-    public void onInit(int initStatus) {
-        if (initStatus == TextToSpeech.SUCCESS) {
-            configTTSVoice();
-
-            // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
-            myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                @Override
-                public void onDone(String utteranceId) {
-                }
-
-                @Override
-                public void onError(String utteranceId) {
-                }
-
-                @Override
-                public void onStart(String utteranceId) {
-                }
-            });
-
-
-        } else if (initStatus == TextToSpeech.ERROR) {
-            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
-        }
-    }
+//
+//    void startSpeech() {
+//        pauseOtherApps();
+//
+//        String words = news.getCurrentNews();
+//        speakWords(words);
+//    }
+//
+//    void stopSpeech() {
+//        if (myTTS.isSpeaking()) {
+//            myTTS.stop();
+//
+//            audioManager.abandonAudioFocus(this);
+//        }
+//    }
+//
+//
+//    private void configTTSVoice() {
+//        float pitch = 0.9f;
+//        float speechRate = 0.9f;
+//
+//        // myTTS.setLanguage(Locale.US);
+//        if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE) {
+//            myTTS.setLanguage(Locale.US);
+//        }
+//
+//        myTTS.setPitch(pitch);
+//        myTTS.setSpeechRate(speechRate);
+//    }
+//
+//    private void speakWords(String speech) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            ttsGreater21(speech);
+//        } else {
+//            ttsUnder20(speech);
+//        }
+//    }
+//
+//    @SuppressWarnings("deprecation")
+//    private void ttsUnder20(String text) {
+//        HashMap<String, String> map = new HashMap<>();
+//        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+//        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+//    }
+//
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    private void ttsGreater21(String text) {
+//        String utteranceId = this.hashCode() + "";
+//        myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+//    }
+//
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//        super.onActivityResult(requestCode, resultCode, intent);
+//
+//        if (requestCode == MY_DATA_CHECK_CODE) {
+//            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+//                myTTS = new TextToSpeech(this, this);
+//            } else {
+//                Intent installTTSIntent = new Intent();
+//                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+//                startActivity(installTTSIntent);
+//            }
+//        }
+//    }
+//
+//    public void onInit(int initStatus) {
+//        if (initStatus == TextToSpeech.SUCCESS) {
+////            configTTSVoice();
+//
+//            // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
+//            myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+//                @Override
+//                public void onDone(String utteranceId) {
+//                }
+//
+//                @Override
+//                public void onError(String utteranceId) {
+//                }
+//
+//                @Override
+//                public void onStart(String utteranceId) {
+//                }
+//            });
+//
+//
+//        } else if (initStatus == TextToSpeech.ERROR) {
+//            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
+//        }
+//    }
 
 
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
+        new NewsService(this).cancelSchedule();
+
         if (audioManager != null) {
 //            audioManager.release();
             audioManager.abandonAudioFocus(this);
             audioManager = null;
         }
-        if (myTTS != null) {
-            myTTS.stop();
-            myTTS.shutdown();
-            myTTS = null;
+        if (ttsservice != null) {
+            ttsservice.destroy();
         }
         super.onDestroy();
     }
@@ -297,6 +286,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                 Log.d("MainActivity", "Clicked on 'feedback_link'");
                 return true;
             case R.id.logout_link:
+                new NewsService(this).cancelSchedule();
                 Log.d("MainActivity", "Clicked on 'logout_link'");
                 return true;
             default:

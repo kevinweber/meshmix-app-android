@@ -40,8 +40,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <receiver android:name=".AlarmReceiver"></receiver>
-        <service android:name=".AlarmService" />
+        <receiver android:name=".NewstimeReceiver"></receiver>
+        <service android:name=".NewstimeService" />
 
     </application>
 
