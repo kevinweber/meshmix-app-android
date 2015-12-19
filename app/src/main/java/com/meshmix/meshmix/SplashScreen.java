@@ -1,12 +1,12 @@
 package com.meshmix.meshmix;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
 public class SplashScreen extends Activity {
-
     // Splash screen timer
     private static int SPLASH_TIME_OUT = 800;
 

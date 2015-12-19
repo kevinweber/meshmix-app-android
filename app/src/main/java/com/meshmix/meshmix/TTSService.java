@@ -9,6 +9,8 @@ import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -18,49 +20,63 @@ import java.util.Locale;
  */
 public class TTSService implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
-    private NewsService news;
-    private AudioManagerService audioManager;
+    private static NewsService news;
+    private static AudioManagerService audioManager;
     private Context context;
+    private Integer ttsStatus = -1;
 
     TTSService(Context context) {
         this.context = context;
 
-        if (myTTS == null) {
+        if (!isTtsInitialized()) {
             myTTS = new TextToSpeech(context, this);
         }
         if (news == null) {
             news = new NewsService(context);
             news.loadNews();
-            news.scheduleNews();
+//            news.scheduleNews();
         }
         if (audioManager == null) {
             audioManager = new AudioManagerService(context);
         }
     }
 
+    private boolean isTtsInitialized() {
+        return myTTS != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
+    }
 
     void handleSpeech() {
-        // TODO: Test if myTTS is initialized already
-
-        if (myTTS.isSpeaking()) {
-            stopSpeech();
+        if (isTtsInitialized()) {
+            if (myTTS.isSpeaking()) {
+                stopSpeech();
+            } else {
+                startSpeech();
+            }
         } else {
-            startSpeech();
+            // TODO: Catch this different (more user friendly for production)
+            Toast.makeText(context, "TTS is not loaded fully yet", Toast.LENGTH_SHORT).show();
         }
     }
 
     protected void startSpeech() {
-        audioManager.pauseOtherApps();
+        if (isTtsInitialized() && audioManager != null && news != null) {
+            audioManager.pauseOtherApps();
 
-        String words = news.getCurrentNews();
-        speakWords(words);
+            String words = news.getCurrentNews();
+            speakWords(words);
+        }
     }
 
     protected void stopSpeech() {
-        if (myTTS.isSpeaking()) {
-            myTTS.stop();
+        // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
+        //            stopped other music fully, TTS will stop but music will not continue playing
 
-            audioManager.abandonAudioFocus();
+        if (isTtsInitialized() && audioManager != null) {
+            if (myTTS.isSpeaking()) {
+                myTTS.stop();
+
+                audioManager.abandonAudioFocus();
+            }
         }
     }
 
@@ -103,6 +119,8 @@ public class TTSService implements TextToSpeech.OnInitListener {
     @Override
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
+            ttsStatus = TextToSpeech.SUCCESS;
+
             configTTSVoice();
 
             // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
@@ -121,6 +139,8 @@ public class TTSService implements TextToSpeech.OnInitListener {
             });
 
         } else if (initStatus == TextToSpeech.ERROR) {
+            ttsStatus = initStatus;
+
             Toast.makeText(context, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }

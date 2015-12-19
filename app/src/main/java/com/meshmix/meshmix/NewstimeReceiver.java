@@ -20,6 +20,7 @@ public class NewstimeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("NewstimeReceiver", "Received sth");
 
+        new TTSService(context).handleSpeech();
 //        Intent service = new Intent(context, NewstimeService.class);
 //        context.startService(service);
     }

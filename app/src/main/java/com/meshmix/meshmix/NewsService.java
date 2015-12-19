@@ -56,8 +56,8 @@ public class NewsService {
         calendar.set(Calendar.MINUTE, 30);
 
         // Fire alarm exact once; repeat firing by implementing this function into receiver
-        alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
-                1000 * 12, alarmIntent);
+//        alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
+//                1000 * 12, alarmIntent);
 
         // With setInexactRepeating(), you have to use one of the AlarmManager interval
         // constants--in this case, AlarmManager.INTERVAL_DAY.
@@ -69,7 +69,7 @@ public class NewsService {
 
     }
 
-    protected void cancelSchedule() {
+    protected static void cancelSchedule() {
         alarmManager.cancel(alarmIntent);
     }
 
