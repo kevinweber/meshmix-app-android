@@ -2,13 +2,7 @@ package com.meshmix.meshmix;
 
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
 
-import android.annotation.TargetApi;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -20,14 +14,14 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-    private TTSService ttsservice;
+    private NewstimeForeground ttsservice;
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        ttsservice = new TTSService(getApplicationContext());
+        ttsservice = new NewstimeForeground(getApplicationContext());
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);

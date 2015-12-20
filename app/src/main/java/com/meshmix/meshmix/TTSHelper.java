@@ -50,32 +50,37 @@ public class TTSHelper {
         myTTS.setSpeechRate(speechRate);
     }
 
+    protected void setOnUtteranceProgressListener() {
+        // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
+        myTTS.setOnUtteranceProgressListener(createNewUtteranceProgressListener());
+    }
+
     protected UtteranceProgressListener createNewUtteranceProgressListener() {
         return new UtteranceProgressListener() {
 
             @Override
             public void onStart(String utteranceId) {
-                Log.d("TTSService", "TTS started");
+                Log.d("NewstimeForeground", "TTS started");
             }
 
             @Override
             public void onError(String utteranceId) {   // Deprecated in API level 21
-                Log.d("TTSService", "Error occurred");
+                Log.d("NewstimeForeground", "Error occurred");
             }
 
             @Override
             public void onError(String utteranceId, int errorCode) {
-                Log.d("TTSService", "Error occurred");
+                Log.d("NewstimeForeground", "Error occurred");
             }
 
             @Override
             public void onStop(String utteranceId, boolean interrupted) {
-                Log.d("TTSService", "Stopped while TTS was in progress");
+                Log.d("NewstimeForeground", "Stopped while TTS was in progress");
             }
 
             @Override
             public void onDone(String string) {
-                Log.d("TTSService", "Done");
+                Log.d("NewstimeForeground", "Done");
             }
         };
     }

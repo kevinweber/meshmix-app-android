@@ -1,34 +1,31 @@
 package com.meshmix.meshmix;
 
-import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * TODO: Remove this class (maybe)
  */
 
 public class NewstimeService extends IntentService implements TextToSpeech.OnInitListener {
-    private Integer ttsStatus = -1;
+    protected Integer ttsStatus = -1;
     private TextToSpeech myTTS;
     private TTSHelper ttsHelper;
     protected Context context;
+    private NewsService newsService;
 
     public NewstimeService() {
         super("NewstimeService");
+
+        if (newsService == null) {
+            newsService = new NewsService(context);
+            newsService.loadNews();
+        }
+
         Log.d("NewstimeService", "Constructor - Handle intent");
     }
 
@@ -48,10 +45,7 @@ public class NewstimeService extends IntentService implements TextToSpeech.OnIni
 
             ttsHelper.configTTSVoice();
             ttsHelper.speakWords("TEST SUCCESSFUL!!");
-
-            // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
-            myTTS.setOnUtteranceProgressListener(ttsHelper.createNewUtteranceProgressListener());
-
+            ttsHelper.setOnUtteranceProgressListener();
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
             Toast.makeText(context, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();

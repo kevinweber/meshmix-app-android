@@ -44,7 +44,7 @@ public class NewsService {
 
 
         alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NewstimeReceiver.class);
+        Intent intent = new Intent(context, NewstimeBroadcastReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         // Set the alarm to start at 8:30 a.m.
@@ -63,7 +63,7 @@ public class NewsService {
 //        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
-        Log.d("MainActivity", "Alarm set");
+        Log.d("NewsService", "Alarm set");
 
     }
 
@@ -84,7 +84,7 @@ public class NewsService {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;
             alarmIntent = null;
-            Log.d("MainActivity", "Alarm should be cancelled now");
+            Log.d("NewsService", "Alarm should be cancelled now");
         }
     }
 

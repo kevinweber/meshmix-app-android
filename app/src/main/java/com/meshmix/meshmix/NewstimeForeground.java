@@ -1,48 +1,50 @@
 package com.meshmix.meshmix;
 
-import android.annotation.TargetApi;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Build;
-import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Locale;
 
 // TODO: Add Earcon (mapping between a string of text and a sound file)
 // http://developer.android.com/reference/android/speech/tts/TextToSpeech.html#addEarcon(java.lang.String, java.io.File)
 
 /**
  * This class handles everything directly related to text to speech.
- * For example, it offers methods that allow the playback of news.
+ * For example, it offers methods that allow the playback of newsService.
  */
-public class TTSService implements TextToSpeech.OnInitListener {
+public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
-    private static NewsService news;
+    private static NewsService newsService;
     private static AudioManagerService audioManager;
     private Integer ttsStatus = -1;
     private static Context context;
     private TTSHelper ttsHelper;
 
-    TTSService(Context context) {
+    NewstimeForeground(Context context) {
         this.context = context;
 
         if (!isTtsInitialized()) {
             myTTS = new TextToSpeech(context, this);
             ttsHelper = new TTSHelper(myTTS);
         }
-        if (news == null) {
-            news = new NewsService(context);
-            news.loadNews();
+        if (newsService == null) {
+            newsService = new NewsService(context);
+            newsService.loadNews();
         }
         if (audioManager == null) {
             audioManager = new AudioManagerService(context);
+        }
+    }
+
+    protected void startAutoplay() {
+        if (newsService != null) {
+            newsService.scheduleNews();
+        }
+    }
+
+    protected void stopAutoplay() {
+        if (newsService != null) {
+            newsService.cancelSchedule();
         }
     }
 
@@ -63,30 +65,11 @@ public class TTSService implements TextToSpeech.OnInitListener {
         }
     }
 
-    protected void startAutoplay() {
-        if (news != null) {
-            news.scheduleNews();
-        }
-    }
-
-    protected void stopAutoplay() {
-        if (news != null) {
-            news.cancelSchedule();
-        }
-    }
-
     protected void startSpeech() {
-        if (ttsStatus == TextToSpeech.SUCCESS) {
-            Log.d("TTSService", "Cond 3 initialized");
-        } else {
-            Log.d("TTSService", "Cond 3 NOT initialized");
-        }
-
-
-        if (isTtsInitialized() && audioManager != null && news != null) {
+        if (isTtsInitialized() && audioManager != null && newsService != null) {
             audioManager.pauseOtherApps();
 
-            String words = news.getCurrentNews();
+            String words = newsService.getCurrentNews();
             ttsHelper.speakWords(words);
         }
     }
@@ -108,12 +91,12 @@ public class TTSService implements TextToSpeech.OnInitListener {
     @Override
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
-            ttsStatus = TextToSpeech.SUCCESS;
+            ttsStatus = initStatus;
 
             ttsHelper.configTTSVoice();
 
             // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
-            myTTS.setOnUtteranceProgressListener(createNewUtteranceProgressListener());
+            myTTS.setOnUtteranceProgressListener(ttsHelper.createNewUtteranceProgressListener());
 
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
@@ -122,52 +105,20 @@ public class TTSService implements TextToSpeech.OnInitListener {
         }
     }
 
-    private UtteranceProgressListener createNewUtteranceProgressListener() {
-        return new UtteranceProgressListener() {
-
-            @Override
-            public void onStart(String utteranceId) {
-                Log.d("TTSService", "TTS started");
-            }
-
-            @Override
-            public void onError(String utteranceId) {   // Deprecated in API level 21
-                Log.d("TTSService", "Error occurred");
-            }
-
-            @Override
-            public void onError(String utteranceId, int errorCode) {
-                Log.d("TTSService", "Error occurred");
-            }
-
-            @Override
-            public void onStop(String utteranceId, boolean interrupted) {
-                Log.d("TTSService", "Stopped while TTS was in progress");
-            }
-
-            @Override
-            public void onDone(String string) {
-                Log.d("TTSService", "Done");
-            }
-        };
-    }
-
     protected void destroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         if (myTTS != null) {
             myTTS.stop();
             myTTS.shutdown();
-            Log.d("TTSService", "TTS Destroyed");
-//            myTTS = null;
-            Log.d("TTSService", "TTS Destroyed 2");
+            myTTS = null;
         }
         if (audioManager != null) {
             audioManager.destroy();
             audioManager = null;
         }
-        if (news != null) {
-            news.destroy();
-            news = null;
+        if (newsService != null) {
+            newsService.destroy();
+            newsService = null;
         }
 
     }

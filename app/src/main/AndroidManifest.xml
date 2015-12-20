@@ -30,7 +30,7 @@
             android:label="@string/app_name">
         </activity>
 
-        <receiver android:name=".NewstimeReceiver"></receiver>
+        <receiver android:name=".NewstimeBroadcastReceiver"></receiver>
         <service android:name=".NewstimeService" />
 
     </application>
