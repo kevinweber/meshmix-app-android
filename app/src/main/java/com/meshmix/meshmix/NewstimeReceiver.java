@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
@@ -16,13 +17,13 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class NewstimeReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
         Log.d("NewstimeReceiver", "Received sth");
 
-        new TTSService(context).handleSpeech();
-//        Intent service = new Intent(context, NewstimeService.class);
-//        context.startService(service);
+        Intent service = new Intent(context, NewstimeService.class);
+        context.startService(service);
     }
-
 }

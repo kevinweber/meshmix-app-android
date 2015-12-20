@@ -3,7 +3,12 @@ package com.meshmix.meshmix;
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -22,7 +27,7 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        ttsservice = new TTSService(this);
+        ttsservice = new TTSService(getApplicationContext());
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);
@@ -33,6 +38,20 @@ public class MainActivity extends Activity {
             }
         });
 
+        final Button startAutoplayButton = (Button) findViewById(R.id.start_autoplay);
+        startAutoplayButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startAutoplay(v);
+            }
+        });
+
+        final Button stopAutoplayButton = (Button) findViewById(R.id.stop_autoplay);
+        stopAutoplayButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                stopAutoplay(v);
+            }
+        });
+
     }
 
     // Respond to button clicks
@@ -40,13 +59,12 @@ public class MainActivity extends Activity {
         ttsservice.handleSpeech();
     }
 
+    void startAutoplay(View v) {
+        ttsservice.startAutoplay();
+    }
 
-    @Override
-    protected void onDestroy() {
-        if (ttsservice != null) {
-            ttsservice.destroy();
-        }
-        super.onDestroy();
+    void stopAutoplay(View v) {
+        ttsservice.stopAutoplay();
     }
 
 
@@ -69,7 +87,6 @@ public class MainActivity extends Activity {
                 Log.d("MainActivity", "Clicked on 'feedback_link'");
                 return true;
             case R.id.logout_link:
-                new NewsService(this).cancelSchedule();
                 Log.d("MainActivity", "Clicked on 'logout_link'");
                 return true;
             default:
@@ -85,5 +102,13 @@ public class MainActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (ttsservice != null) {
+            ttsservice.destroy();
+        }
+        super.onDestroy();
     }
 }

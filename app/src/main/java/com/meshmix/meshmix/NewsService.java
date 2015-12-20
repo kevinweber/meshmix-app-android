@@ -18,9 +18,7 @@ import java.util.Calendar;
  */
 public class NewsService {
     private static String CurrentNews;
-
-    private Context context;
-
+    private static Context context;
     private static AlarmManager alarmManager;
     private static PendingIntent alarmIntent;
 
@@ -56,8 +54,8 @@ public class NewsService {
         calendar.set(Calendar.MINUTE, 30);
 
         // Fire alarm exact once; repeat firing by implementing this function into receiver
-//        alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
-//                1000 * 12, alarmIntent);
+        alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
+                1000 * 12, alarmIntent);
 
         // With setInexactRepeating(), you have to use one of the AlarmManager interval
         // constants--in this case, AlarmManager.INTERVAL_DAY.
@@ -69,8 +67,8 @@ public class NewsService {
 
     }
 
-    protected static void cancelSchedule() {
-        alarmManager.cancel(alarmIntent);
+    protected void cancelSchedule() {
+        destroyAlarmManager();
     }
 
     protected static String getCurrentNews() {
@@ -81,11 +79,16 @@ public class NewsService {
         CurrentNews = currentNews;
     }
 
-    protected void destroy() {
+    private void destroyAlarmManager() {
         if (alarmManager != null) {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;
             alarmIntent = null;
+            Log.d("MainActivity", "Alarm should be cancelled now");
         }
+    }
+
+    protected void destroy() {
+        destroyAlarmManager();
     }
 }

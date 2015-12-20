@@ -24,6 +24,18 @@
             android:text="Speak"
             />
 
+        <Button
+            android:id="@+id/start_autoplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activate Autoplay" />
+
+        <Button
+            android:id="@+id/stop_autoplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deactivate Autoplay" />
+
     </LinearLayout>
 
 </RelativeLayout>
