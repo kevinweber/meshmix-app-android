@@ -12,7 +12,7 @@ public class NewstimeBroadcastReceiver extends BroadcastReceiver {
 
         Log.d("NewstimeBroRec", "Received sth");
 
-        Intent service = new Intent(context, NewstimeService.class);
+        Intent service = new Intent(context, NewstimeBackgroundService.class);
         context.startService(service);
     }
 }

@@ -11,31 +11,31 @@ import android.widget.Toast;
  * TODO: Remove this class (maybe)
  */
 
-public class NewstimeService extends IntentService implements TextToSpeech.OnInitListener {
+public class NewstimeBackgroundService extends IntentService implements TextToSpeech.OnInitListener {
     protected Integer ttsStatus = -1;
     private TextToSpeech myTTS;
     private TTSHelper ttsHelper;
     protected Context context;
     private NewsService newsService;
 
-    public NewstimeService() {
-        super("NewstimeService");
+    public NewstimeBackgroundService() {
+        super("NewstimeBackgroundService");
 
         if (newsService == null) {
             newsService = new NewsService(context);
             newsService.loadNews();
         }
 
-        Log.d("NewstimeService", "Constructor - Handle intent");
+        Log.d("NewstimeBgService", "Constructor - Handle intent");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Log.d("NewstimeService", "Handle intent");
+        Log.d("NewstimeBgService", "Handle intent");
 
         myTTS = new TextToSpeech(this.getApplicationContext(), this);
-        ttsHelper = new TTSHelper(myTTS);
+        ttsHelper = new TTSHelper(myTTS, newsService);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class NewstimeService extends IntentService implements TextToSpeech.OnIni
             ttsStatus = TextToSpeech.SUCCESS;
 
             ttsHelper.configTTSVoice();
-            ttsHelper.speakWords("TEST SUCCESSFUL!!");
+            ttsHelper.startSpeech();
             ttsHelper.setOnUtteranceProgressListener();
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;

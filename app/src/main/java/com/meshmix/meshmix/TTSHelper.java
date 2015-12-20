@@ -10,10 +10,23 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class TTSHelper {
-    TextToSpeech myTTS;
+    private TextToSpeech myTTS;
+    private NewsService newsService;
 
     protected TTSHelper(TextToSpeech myTTS) {
         this.myTTS = myTTS;
+    }
+
+    protected TTSHelper(TextToSpeech myTTS, NewsService newsService) {
+        this.myTTS = myTTS;
+        this.newsService = newsService;
+    }
+
+    protected void startSpeech() {
+        if (newsService != null) {
+            String words = newsService.getCurrentNews();
+            speakWords(words);
+        }
     }
 
     protected void speakWords(String speech) {
