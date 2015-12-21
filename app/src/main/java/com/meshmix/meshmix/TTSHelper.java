@@ -1,11 +1,11 @@
 package com.meshmix.meshmix;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,10 +13,20 @@ import java.util.Locale;
 public class TTSHelper {
     private TextToSpeech myTTS;
     private NewsService newsService;
+    private Context context;
 
-    protected TTSHelper(TextToSpeech myTTS, NewsService newsService) {
+    protected TTSHelper(TextToSpeech myTTS, Context context) {
         this.myTTS = myTTS;
-        this.newsService = newsService;
+        this.context = context;
+
+        initNewsService();
+    }
+
+    private void initNewsService() {
+        if (newsService == null) {
+            newsService = new NewsService(context);
+            newsService.loadNews();
+        }
     }
 
     protected void startAutoplay() {

@@ -16,15 +16,9 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
     private static TextToSpeech myTTS;
     private static TTSHelper ttsHelper;
     protected static Context context;
-    private static NewsService newsService;
 
     public NewstimeBackground() {
         super(NewstimeBackground.class.getName());
-
-        if (newsService == null) {
-            newsService = new NewsService(context);
-            newsService.loadNews();
-        }
     }
 
     @Override
@@ -33,7 +27,7 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
         Log.d("NewstimeBackground", "Handling intent");
 
         myTTS = new TextToSpeech(this.getApplicationContext(), this);
-        ttsHelper = new TTSHelper(myTTS, newsService);
+        ttsHelper = new TTSHelper(myTTS, context);
     }
 
     protected void stopSpeech() {

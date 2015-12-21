@@ -1,7 +1,6 @@
 package com.meshmix.meshmix;
 
 import android.content.Context;
-import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,13 +8,8 @@ import android.widget.Toast;
 // TODO: Add Earcon (mapping between a string of text and a sound file)
 // http://developer.android.com/reference/android/speech/tts/TextToSpeech.html#addEarcon(java.lang.String, java.io.File)
 
-/**
- * This class handles everything directly related to text to speech.
- * For example, it offers methods that allow the playback of newsService.
- */
 public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
-    private static NewsService newsService;
     private static AudioManagerService audioManager;
     private static Integer ttsStatus = -1;
     private static Context context;
@@ -24,13 +18,9 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     NewstimeForeground(Context context) {
         this.context = context;
 
-        if (newsService == null) {
-            newsService = new NewsService(context);
-            newsService.loadNews();
-        }
         if (!isTtsInitialized()) {
             myTTS = new TextToSpeech(context, this);
-            ttsHelper = new TTSHelper(myTTS, newsService);
+            ttsHelper = new TTSHelper(myTTS, context);
         }
         if (audioManager == null) {
             audioManager = new AudioManagerService(context);
@@ -93,17 +83,10 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         if (ttsHelper != null) {
             ttsHelper.destroy();
-//            myTTS.stop();
-//            myTTS.shutdown();
-//            myTTS = null;
         }
         if (audioManager != null) {
             audioManager.destroy();
             audioManager = null;
         }
-//        if (newsService != null) {
-//            newsService.destroy();
-//            newsService = null;
-//        }
     }
 }
