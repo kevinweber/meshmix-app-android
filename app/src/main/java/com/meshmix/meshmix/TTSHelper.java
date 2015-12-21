@@ -61,8 +61,8 @@ public class TTSHelper {
         if (newsManager != null && newsManager != null && audioManager != null) {
             audioManager.pauseOtherApps();
 
-            String words = newsManager.getCurrentNews();
-            speakWords(words);
+            String text = newsManager.getCurrentNews();
+            speakText(text);
         }
     }
 
@@ -85,7 +85,7 @@ public class TTSHelper {
         return myTTS.isSpeaking();
     }
 
-    protected void speakWords(String speech) {
+    protected void speakText(String speech) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ttsGreater21(speech);
         } else {
@@ -165,6 +165,12 @@ public class TTSHelper {
             newsManager.destroy();
             newsManager = null;
         }
+        if (audioManager != null) {
+            audioManager.destroy();
+            audioManager = null;
+        }
 
+        // TODO: Stop TTS which might be running in a background service
+//        new NewstimeBackground().stopSpeech(); // not working
     }
 }

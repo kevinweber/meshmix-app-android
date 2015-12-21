@@ -114,6 +114,9 @@ public class MainActivity extends Activity {
         if (newstimeForeground != null) {
             newstimeForeground.destroy();
         }
+
+//        new NewstimeBackground().stopSelf();  // not working
+
         super.onDestroy();
     }
 }

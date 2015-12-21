@@ -23,7 +23,6 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         Log.d("NewstimeBackground", "Handling intent");
 
         myTTS = new TextToSpeech(this.getApplicationContext(), this);
@@ -55,6 +54,7 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
 
     @Override
     public void onDestroy() {
+        stopSpeech();   // Seems not to work/change anything
         super.onDestroy();
     }
 }

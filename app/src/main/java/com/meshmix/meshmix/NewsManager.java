@@ -80,8 +80,7 @@ public class NewsManager {
     }
 
     protected void stopBackgroundSpeech() {
-        // TODO: Stop running TTS
-//        Log.d("NewstimeForeground", "Running text should be cancelled now");
+        Log.d("NewstimeForeground", "Running text should be cancelled now");
         new NewstimeBackground().stopSpeech();
     }
 
@@ -94,7 +93,7 @@ public class NewsManager {
     }
 
     private void destroyAlarmManager() {
-        if (alarmManager != null) {
+        if (alarmManager != null && alarmIntent != null) {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;
             alarmIntent = null;
@@ -103,6 +102,6 @@ public class NewsManager {
     }
 
     protected void destroy() {
-        destroyAlarmManager();
+//        destroyAlarmManager();
     }
 }
