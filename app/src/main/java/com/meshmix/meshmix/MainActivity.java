@@ -14,14 +14,14 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-    private NewstimeForeground ttsservice;
+    private NewstimeForeground newstimeForeground;
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        ttsservice = new NewstimeForeground(getApplicationContext());
+        newstimeForeground = new NewstimeForeground(getApplicationContext());
 
         // Ret a reference to the button element listed in the XML layout
         final Button speakButton = (Button) findViewById(R.id.speak);
@@ -57,19 +57,19 @@ public class MainActivity extends Activity {
 
     // Respond to button clicks
     void handleSpeakButtonClicks(View v) {
-        ttsservice.handleSpeech();
+        newstimeForeground.handleSpeech();
     }
 
     void startAutoplay(View v) {
-        ttsservice.startAutoplay();
+        newstimeForeground.startAutoplay();
     }
 
     void stopAutoplay(View v) {
-        ttsservice.stopAutoplay();
+        newstimeForeground.stopAutoplay();
     }
 
     void stopBackgroundSpeech(View v) {
-        ttsservice.stopBackgroundSpeech();
+        newstimeForeground.stopBackgroundSpeech();
     }
 
 
@@ -111,8 +111,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (ttsservice != null) {
-            ttsservice.destroy();
+        if (newstimeForeground != null) {
+            newstimeForeground.destroy();
         }
         super.onDestroy();
     }

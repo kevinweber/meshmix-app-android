@@ -10,16 +10,17 @@ class APIService extends AsyncTask<String, Void, String> {
     private static String access_token = "R2lT3tDJvBVN2pMXONw6FvvpLl1SzwNELgDT0wfI";
     private Context context;
 
+    APIService(Context context) {
+        this.context = context;
+    }
+
+
     static String getAccessToken() {
         return access_token;
     }
 
     static void setAccessToken(String string) {
         access_token = string;
-    }
-
-    APIService(Context context) {
-        this.context = context;
     }
 
     protected String doInBackground(String... strings) {

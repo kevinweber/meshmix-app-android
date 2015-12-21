@@ -14,7 +14,7 @@ import java.util.Calendar;
  */
 
 /**
- * Here you find everything related to Text to Speech (TTS)
+ * The NewsManager communicates with APIService and schedules when news shall be played
  */
 public class NewsManager {
     private static String CurrentNews;
@@ -28,9 +28,10 @@ public class NewsManager {
     }
 
     protected void loadNews() {
-        String access_token = new APIService(context).getAccessToken();
+        APIService apiService = new APIService(context);
+        String access_token = apiService.getAccessToken();
 
-        new APIService(context).execute("http://unlazy.de/news", access_token);
+        apiService.execute("http://unlazy.de/news", access_token);
     }
 
 

@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * TODO: Remove this class (maybe)
+ * TODO: Description...
  */
 
 public class NewstimeBackground extends IntentService implements TextToSpeech.OnInitListener {

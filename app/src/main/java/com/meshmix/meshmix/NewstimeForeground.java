@@ -8,6 +8,10 @@ import android.widget.Toast;
 // TODO: Add Earcon (mapping between a string of text and a sound file)
 // http://developer.android.com/reference/android/speech/tts/TextToSpeech.html#addEarcon(java.lang.String, java.io.File)
 
+/**
+ * TODO: Description...
+ */
+
 public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
     private static Integer ttsStatus = -1;
