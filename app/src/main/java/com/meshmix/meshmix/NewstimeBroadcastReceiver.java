@@ -17,7 +17,7 @@ public class NewstimeBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void startBackgroundService(Context context) {
-        service = new Intent(context, NewstimeBackgroundService.class);
+        service = new Intent(context, NewstimeBackground.class);
         context.startService(service);
     }
 

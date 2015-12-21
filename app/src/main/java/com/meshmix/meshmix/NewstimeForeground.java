@@ -24,13 +24,13 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     NewstimeForeground(Context context) {
         this.context = context;
 
-        if (!isTtsInitialized()) {
-            myTTS = new TextToSpeech(context, this);
-            ttsHelper = new TTSHelper(myTTS);
-        }
         if (newsService == null) {
             newsService = new NewsService(context);
             newsService.loadNews();
+        }
+        if (!isTtsInitialized()) {
+            myTTS = new TextToSpeech(context, this);
+            ttsHelper = new TTSHelper(myTTS, newsService);
         }
         if (audioManager == null) {
             audioManager = new AudioManagerService(context);
@@ -38,21 +38,15 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void startAutoplay() {
-        if (newsService != null) {
-            newsService.scheduleNews();
-        }
+        ttsHelper.startAutoplay();
     }
 
     protected void stopAutoplay() {
-        if (newsService != null) {
-            newsService.cancelSchedule();
-        }
+        ttsHelper.stopAutoplay();
     }
 
     protected void stopBackgroundSpeech() {
-        if (newsService != null) {
-            newsService.stopBackgroundSpeech();
-        }
+        ttsHelper.stopBackgroundSpeech();
     }
 
     private boolean isTtsInitialized() {
@@ -73,25 +67,11 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void startSpeech() {
-        if (isTtsInitialized() && audioManager != null && newsService != null) {
-            audioManager.pauseOtherApps();
-
-            String words = newsService.getCurrentNews();
-            ttsHelper.speakWords(words);
-        }
+        ttsHelper.startSpeech();
     }
 
     protected void stopSpeech() {
-        // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
-        //            stopped other music fully, TTS will stop but music will not continue playing
-
-        if (isTtsInitialized() && audioManager != null) {
-            if (myTTS.isSpeaking()) {
-                myTTS.stop();
-
-                audioManager.abandonAudioFocus();
-            }
-        }
+        ttsHelper.stopSpeech();
     }
 
 
@@ -123,9 +103,9 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
             audioManager.destroy();
             audioManager = null;
         }
-        if (newsService != null) {
-            newsService.destroy();
-            newsService = null;
-        }
+//        if (newsService != null) {
+//            newsService.destroy();
+//            newsService = null;
+//        }
     }
 }

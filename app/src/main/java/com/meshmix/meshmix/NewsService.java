@@ -81,7 +81,7 @@ public class NewsService {
     protected void stopBackgroundSpeech() {
         // TODO: Stop running TTS
 //        Log.d("NewstimeForeground", "Running text should be cancelled now");
-        new NewstimeBackgroundService().stopSpeech();
+        new NewstimeBackground().stopSpeech();
     }
 
     protected static String getCurrentNews() {

@@ -22,8 +22,28 @@ public class TTSHelper {
         this.newsService = newsService;
     }
 
-    protected void startSpeech() {
+    protected void startAutoplay() {
         if (newsService != null) {
+            newsService.scheduleNews();
+        }
+    }
+
+    protected void stopAutoplay() {
+        if (newsService != null) {
+            newsService.cancelSchedule();
+        }
+    }
+
+    protected void stopBackgroundSpeech() {
+        if (newsService != null) {
+            newsService.stopBackgroundSpeech();
+        }
+    }
+
+    protected void startSpeech() {
+        if (newsService != null && newsService != null) {   // && audioManager != null
+//            audioManager.pauseOtherApps();
+
             String words = newsService.getCurrentNews();
             speakWords(words);
         }
@@ -35,10 +55,12 @@ public class TTSHelper {
 
         Log.d("NewstimeBgService", "stopping...");
 
-        if (myTTS != null) {
+        if (myTTS != null) {    //  && audioManager != null
             if (myTTS.isSpeaking()) {
                 myTTS.stop();
             }
+
+//            audioManager.abandonAudioFocus();
         }
     }
 

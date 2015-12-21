@@ -11,15 +11,15 @@ import android.widget.Toast;
  * TODO: Remove this class (maybe)
  */
 
-public class NewstimeBackgroundService extends IntentService implements TextToSpeech.OnInitListener {
+public class NewstimeBackground extends IntentService implements TextToSpeech.OnInitListener {
     protected Integer ttsStatus = -1;
     private static TextToSpeech myTTS;
     private static TTSHelper ttsHelper;
     protected Context context;
     private NewsService newsService;
 
-    public NewstimeBackgroundService() {
-        super(NewstimeBackgroundService.class.getName());
+    public NewstimeBackground() {
+        super(NewstimeBackground.class.getName());
 
         if (newsService == null) {
             newsService = new NewsService(context);
