@@ -6,13 +6,20 @@ import android.content.Intent;
 import android.util.Log;
 
 public class NewstimeBroadcastReceiver extends BroadcastReceiver {
+    private static Intent service = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         Log.d("NewstimeBroRec", "Received sth");
 
-        Intent service = new Intent(context, NewstimeBackgroundService.class);
+        startBackgroundService(context);
+    }
+
+    private void startBackgroundService(Context context) {
+        service = new Intent(context, NewstimeBackgroundService.class);
         context.startService(service);
     }
+
+
 }

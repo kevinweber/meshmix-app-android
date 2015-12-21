@@ -29,6 +29,19 @@ public class TTSHelper {
         }
     }
 
+    protected void stopSpeech() {
+        // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
+        //            stopped other music fully, TTS will stop but music will not continue playing
+
+        Log.d("NewstimeBgService", "stopping...");
+
+        if (myTTS != null) {
+            if (myTTS.isSpeaking()) {
+                myTTS.stop();
+            }
+        }
+    }
+
     protected void speakWords(String speech) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ttsGreater21(speech);
@@ -96,5 +109,19 @@ public class TTSHelper {
                 Log.d("NewstimeForeground", "Done");
             }
         };
+    }
+
+    protected void destroy() {
+        // VERY IMPORTANT! This must always be called or else you will leak resources
+        if (myTTS != null) {
+            myTTS.stop();
+            myTTS.shutdown();
+            myTTS = null;
+        }
+        if (newsService != null) {
+            newsService.destroy();
+            newsService = null;
+        }
+
     }
 }

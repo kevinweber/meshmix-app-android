@@ -13,29 +13,34 @@ import android.widget.Toast;
 
 public class NewstimeBackgroundService extends IntentService implements TextToSpeech.OnInitListener {
     protected Integer ttsStatus = -1;
-    private TextToSpeech myTTS;
-    private TTSHelper ttsHelper;
+    private static TextToSpeech myTTS;
+    private static TTSHelper ttsHelper;
     protected Context context;
     private NewsService newsService;
 
     public NewstimeBackgroundService() {
-        super("NewstimeBackgroundService");
+        super(NewstimeBackgroundService.class.getName());
 
         if (newsService == null) {
             newsService = new NewsService(context);
             newsService.loadNews();
         }
-
-        Log.d("NewstimeBgService", "Constructor - Handle intent");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Log.d("NewstimeBgService", "Handle intent");
+        Log.d("NewstimeBgService", "Handling intent");
 
         myTTS = new TextToSpeech(this.getApplicationContext(), this);
         ttsHelper = new TTSHelper(myTTS, newsService);
+    }
+
+    protected void stopSpeech() {
+            Log.d("NewstimeBgService", "Stop TTS");
+        if (ttsHelper != null) {
+            ttsHelper.stopSpeech();
+        }
     }
 
     @Override
@@ -50,5 +55,13 @@ public class NewstimeBackgroundService extends IntentService implements TextToSp
             ttsStatus = initStatus;
             Toast.makeText(context, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
+    }
+
+    // TODO: Stop running TTS
+    @Override
+    public void onDestroy() {
+        Log.d("NewstimeBgService", "got on destroy, asking background thread to stop as well");
+//        ttsHelper.stopSpeech();
+        super.onDestroy();
     }
 }

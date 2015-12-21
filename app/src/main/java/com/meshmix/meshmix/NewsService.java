@@ -21,6 +21,7 @@ public class NewsService {
     private static Context context;
     private static AlarmManager alarmManager;
     private static PendingIntent alarmIntent;
+    private static Intent intent;
 
     protected NewsService(Context context) {
         this.context = context;
@@ -42,10 +43,15 @@ public class NewsService {
         // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
 //        Long time = new GregorianCalendar().getTimeInMillis() + 3000;   //+24*60*60*1000;
 
-
-        alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NewstimeBroadcastReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        if (alarmManager == null) {
+            alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        }
+        if (intent == null) {
+            intent = new Intent(context, NewstimeBroadcastReceiver.class);
+        }
+        if (alarmIntent == null) {
+            alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        }
 
         // Set the alarm to start at 8:30 a.m.
         Calendar calendar = Calendar.getInstance();
@@ -68,7 +74,9 @@ public class NewsService {
     }
 
     protected void cancelSchedule() {
-        destroyAlarmManager();
+        // TODO: Stop running TTS
+//        Log.d("NewstimeForeground", "Running text should be cancelled now");
+        new NewstimeBackgroundService().stopSpeech();
     }
 
     protected static String getCurrentNews() {
