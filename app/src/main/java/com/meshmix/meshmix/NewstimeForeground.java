@@ -17,9 +17,9 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
     private static NewsService newsService;
     private static AudioManagerService audioManager;
-    private Integer ttsStatus = -1;
+    private static Integer ttsStatus = -1;
     private static Context context;
-    private TTSHelper ttsHelper;
+    private static TTSHelper ttsHelper;
 
     NewstimeForeground(Context context) {
         this.context = context;
@@ -37,6 +37,23 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         }
     }
 
+    private boolean isTtsInitialized() {
+        return ttsHelper != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
+    }
+
+    protected void handleSpeech() {
+        if (isTtsInitialized()) {
+            if (ttsHelper.isSpeaking()) {
+                stopSpeech();
+            } else {
+                startSpeech();
+            }
+        } else {
+            // TODO: Catch this different (more user friendly for production)
+            Toast.makeText(context, "TTS is not loaded fully yet", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     protected void startAutoplay() {
         ttsHelper.startAutoplay();
     }
@@ -47,23 +64,6 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
 
     protected void stopBackgroundSpeech() {
         ttsHelper.stopBackgroundSpeech();
-    }
-
-    private boolean isTtsInitialized() {
-        return myTTS != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
-    }
-
-    protected void handleSpeech() {
-        if (isTtsInitialized()) {
-            if (myTTS.isSpeaking()) {
-                stopSpeech();
-            } else {
-                startSpeech();
-            }
-        } else {
-            // TODO: Catch this different (more user friendly for production)
-            Toast.makeText(context, "TTS is not loaded fully yet", Toast.LENGTH_SHORT).show();
-        }
     }
 
     protected void startSpeech() {
@@ -81,10 +81,7 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
             ttsStatus = initStatus;
 
             ttsHelper.configTTSVoice();
-
-            // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
-            myTTS.setOnUtteranceProgressListener(ttsHelper.createNewUtteranceProgressListener());
-
+            ttsHelper.setOnUtteranceProgressListener();
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
 
@@ -94,10 +91,11 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
 
     protected void destroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        if (myTTS != null) {
-            myTTS.stop();
-            myTTS.shutdown();
-            myTTS = null;
+        if (ttsHelper != null) {
+            ttsHelper.destroy();
+//            myTTS.stop();
+//            myTTS.shutdown();
+//            myTTS = null;
         }
         if (audioManager != null) {
             audioManager.destroy();

@@ -12,11 +12,11 @@ import android.widget.Toast;
  */
 
 public class NewstimeBackground extends IntentService implements TextToSpeech.OnInitListener {
-    protected Integer ttsStatus = -1;
+    protected static Integer ttsStatus = -1;
     private static TextToSpeech myTTS;
     private static TTSHelper ttsHelper;
-    protected Context context;
-    private NewsService newsService;
+    protected static Context context;
+    private static NewsService newsService;
 
     public NewstimeBackground() {
         super(NewstimeBackground.class.getName());
@@ -30,16 +30,18 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Log.d("NewstimeBgService", "Handling intent");
+        Log.d("NewstimeBackground", "Handling intent");
 
         myTTS = new TextToSpeech(this.getApplicationContext(), this);
         ttsHelper = new TTSHelper(myTTS, newsService);
     }
 
     protected void stopSpeech() {
-            Log.d("NewstimeBgService", "Stop TTS");
-        if (ttsHelper != null) {
+        if (ttsHelper != null && ttsHelper.isSpeaking()) {
+            Log.d("NewstimeBackground", "TTS is speaking, so start stopping...");
             ttsHelper.stopSpeech();
+        } else {
+            Log.d("NewstimeBackground", "There's no TTS running, and therefore nothing to stop");
         }
     }
 
@@ -57,7 +59,6 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
         }
     }
 
-    // TODO: Stop running TTS
     @Override
     public void onDestroy() {
         super.onDestroy();

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -12,10 +13,6 @@ import java.util.Locale;
 public class TTSHelper {
     private TextToSpeech myTTS;
     private NewsService newsService;
-
-    protected TTSHelper(TextToSpeech myTTS) {
-        this.myTTS = myTTS;
-    }
 
     protected TTSHelper(TextToSpeech myTTS, NewsService newsService) {
         this.myTTS = myTTS;
@@ -53,7 +50,7 @@ public class TTSHelper {
         // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
         //            stopped other music fully, TTS will stop but music will not continue playing
 
-        Log.d("NewstimeBgService", "stopping...");
+        Log.d("NewstimeBgService", "Stopping...");
 
         if (myTTS != null) {    //  && audioManager != null
             if (myTTS.isSpeaking()) {
@@ -62,6 +59,10 @@ public class TTSHelper {
 
 //            audioManager.abandonAudioFocus();
         }
+    }
+
+    protected Boolean isSpeaking() {
+        return myTTS.isSpeaking();
     }
 
     protected void speakWords(String speech) {

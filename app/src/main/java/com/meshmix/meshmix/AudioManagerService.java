@@ -9,14 +9,12 @@ import android.util.Log;
  * This class manages audio streams on the user's device to play fine with this app.
  */
 public class AudioManagerService implements AudioManager.OnAudioFocusChangeListener {
-    private static AudioManager audioManager;
-    private Context context;
+    private AudioManager audioManager;
+    final AudioManager.OnAudioFocusChangeListener audioContext = this;
 
     AudioManagerService(Context context) {
-        this.context = context;
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
-
 
     /**
      * Just "duck" other apps in the first step so that the switch is not to abrupt.
@@ -25,7 +23,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
     void pauseOtherApps() {
         if (audioManager.isMusicActive()) {
             Log.d("MainActivity", "Music is active");
-            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+            int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
             if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -42,11 +40,10 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
     void gainFullTransient() {
         int delayTTS = 2000;
 
-        final AudioManager.OnAudioFocusChangeListener context = this;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int result = audioManager.requestAudioFocus(context, AudioManager.STREAM_MUSIC,
+                int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
                         AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                 if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     // could not get audio focus.
