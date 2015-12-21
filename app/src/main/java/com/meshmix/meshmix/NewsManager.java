@@ -70,13 +70,12 @@ public class NewsManager {
 //        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
-        Log.d("NewsManager", "Alarm set");
+        Log.d("NewsManager", "Autoplay initialized");
 
     }
 
     protected void cancelSchedule() {
-        // TODO: Cancel planned alarmManager
-        // destroyAlarmManager();
+         destroyAlarmManager();
     }
 
     protected void stopBackgroundSpeech() {
@@ -97,11 +96,11 @@ public class NewsManager {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;
             alarmIntent = null;
-            Log.d("NewsManager", "Alarm should be cancelled now");
+            Log.d("NewsManager", "Autoplay stopped");
         }
     }
 
     protected void destroy() {
-//        destroyAlarmManager();
+
     }
 }

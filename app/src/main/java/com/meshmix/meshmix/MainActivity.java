@@ -111,12 +111,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (newstimeForeground != null) {
-            newstimeForeground.destroy();
-        }
-
-//        new NewstimeBackground().stopSelf();  // not working
-
         super.onDestroy();
     }
 }
