@@ -36,6 +36,12 @@
             android:layout_height="wrap_content"
             android:text="Deactivate Autoplay" />
 
+        <Button
+            android:id="@+id/stop_background_autoplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop background speech" />
+
     </LinearLayout>
 
 </RelativeLayout>

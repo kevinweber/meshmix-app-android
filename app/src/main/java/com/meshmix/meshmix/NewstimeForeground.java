@@ -49,6 +49,12 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         }
     }
 
+    protected void stopBackgroundSpeech() {
+        if (newsService != null) {
+            newsService.stopBackgroundSpeech();
+        }
+    }
+
     private boolean isTtsInitialized() {
         return myTTS != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
     }
@@ -121,6 +127,5 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
             newsService.destroy();
             newsService = null;
         }
-
     }
 }

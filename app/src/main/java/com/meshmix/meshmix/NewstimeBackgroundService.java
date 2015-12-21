@@ -60,8 +60,6 @@ public class NewstimeBackgroundService extends IntentService implements TextToSp
     // TODO: Stop running TTS
     @Override
     public void onDestroy() {
-        Log.d("NewstimeBgService", "got on destroy, asking background thread to stop as well");
-//        ttsHelper.stopSpeech();
         super.onDestroy();
     }
 }

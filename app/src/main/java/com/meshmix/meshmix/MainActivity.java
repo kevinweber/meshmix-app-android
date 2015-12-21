@@ -46,6 +46,13 @@ public class MainActivity extends Activity {
             }
         });
 
+        final Button stopBackgroundAutoplayButton = (Button) findViewById(R.id.stop_background_autoplay);
+        stopBackgroundAutoplayButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                stopBackgroundSpeech(v);
+            }
+        });
+
     }
 
     // Respond to button clicks
@@ -59,6 +66,10 @@ public class MainActivity extends Activity {
 
     void stopAutoplay(View v) {
         ttsservice.stopAutoplay();
+    }
+
+    void stopBackgroundSpeech(View v) {
+        ttsservice.stopBackgroundSpeech();
     }
 
 

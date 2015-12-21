@@ -74,6 +74,11 @@ public class NewsService {
     }
 
     protected void cancelSchedule() {
+        // TODO: Cancel planned alarmManager
+        // destroyAlarmManager();
+    }
+
+    protected void stopBackgroundSpeech() {
         // TODO: Stop running TTS
 //        Log.d("NewstimeForeground", "Running text should be cancelled now");
         new NewstimeBackgroundService().stopSpeech();
