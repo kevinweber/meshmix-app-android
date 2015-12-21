@@ -11,47 +11,57 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class TTSHelper {
-    private TextToSpeech myTTS;
-    private NewsService newsService;
-    private Context context;
+    private static TextToSpeech myTTS;
+    private static Context context;
+    private static NewsManager newsManager;
+    private static AudioManagerService audioManager;
 
     protected TTSHelper(TextToSpeech myTTS, Context context) {
         this.myTTS = myTTS;
         this.context = context;
 
-        initNewsService();
+        initNewsManager();
+        initAudioManager();
     }
 
-    private void initNewsService() {
-        if (newsService == null) {
-            newsService = new NewsService(context);
-            newsService.loadNews();
+    private void initNewsManager() {
+        if (newsManager == null) {
+            newsManager = new NewsManager(context);
+        }
+        if (newsManager != null) {
+            newsManager.loadNews();
+        }
+    }
+
+    private void initAudioManager() {
+        if (audioManager == null) {
+            audioManager = new AudioManagerService(context);
         }
     }
 
     protected void startAutoplay() {
-        if (newsService != null) {
-            newsService.scheduleNews();
+        if (newsManager != null) {
+            newsManager.scheduleNews();
         }
     }
 
     protected void stopAutoplay() {
-        if (newsService != null) {
-            newsService.cancelSchedule();
+        if (newsManager != null) {
+            newsManager.cancelSchedule();
         }
     }
 
     protected void stopBackgroundSpeech() {
-        if (newsService != null) {
-            newsService.stopBackgroundSpeech();
+        if (newsManager != null) {
+            newsManager.stopBackgroundSpeech();
         }
     }
 
     protected void startSpeech() {
-        if (newsService != null && newsService != null) {   // && audioManager != null
-//            audioManager.pauseOtherApps();
+        if (newsManager != null && newsManager != null && audioManager != null) {
+            audioManager.pauseOtherApps();
 
-            String words = newsService.getCurrentNews();
+            String words = newsManager.getCurrentNews();
             speakWords(words);
         }
     }
@@ -62,12 +72,12 @@ public class TTSHelper {
 
         Log.d("NewstimeBgService", "Stopping...");
 
-        if (myTTS != null) {    //  && audioManager != null
+        if (myTTS != null && audioManager != null) {
             if (myTTS.isSpeaking()) {
                 myTTS.stop();
             }
 
-//            audioManager.abandonAudioFocus();
+            audioManager.abandonAudioFocus();
         }
     }
 
@@ -151,9 +161,9 @@ public class TTSHelper {
             myTTS.shutdown();
             myTTS = null;
         }
-        if (newsService != null) {
-            newsService.destroy();
-            newsService = null;
+        if (newsManager != null) {
+            newsManager.destroy();
+            newsManager = null;
         }
 
     }

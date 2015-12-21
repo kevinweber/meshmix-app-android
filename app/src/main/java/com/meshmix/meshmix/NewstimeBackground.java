@@ -12,10 +12,10 @@ import android.widget.Toast;
  */
 
 public class NewstimeBackground extends IntentService implements TextToSpeech.OnInitListener {
+    protected static Context context;
     protected static Integer ttsStatus = -1;
     private static TextToSpeech myTTS;
     private static TTSHelper ttsHelper;
-    protected static Context context;
 
     public NewstimeBackground() {
         super(NewstimeBackground.class.getName());

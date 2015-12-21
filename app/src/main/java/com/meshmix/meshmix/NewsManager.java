@@ -16,14 +16,14 @@ import java.util.Calendar;
 /**
  * Here you find everything related to Text to Speech (TTS)
  */
-public class NewsService {
+public class NewsManager {
     private static String CurrentNews;
     private static Context context;
     private static AlarmManager alarmManager;
     private static PendingIntent alarmIntent;
     private static Intent intent;
 
-    protected NewsService(Context context) {
+    protected NewsManager(Context context) {
         this.context = context;
     }
 
@@ -69,7 +69,7 @@ public class NewsService {
 //        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
-        Log.d("NewsService", "Alarm set");
+        Log.d("NewsManager", "Alarm set");
 
     }
 
@@ -97,7 +97,7 @@ public class NewsService {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;
             alarmIntent = null;
-            Log.d("NewsService", "Alarm should be cancelled now");
+            Log.d("NewsManager", "Alarm should be cancelled now");
         }
     }
 

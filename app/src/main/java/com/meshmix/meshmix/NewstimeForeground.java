@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
-    private static AudioManagerService audioManager;
     private static Integer ttsStatus = -1;
     private static Context context;
     private static TTSHelper ttsHelper;
@@ -21,9 +20,6 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         if (!isTtsInitialized()) {
             myTTS = new TextToSpeech(context, this);
             ttsHelper = new TTSHelper(myTTS, context);
-        }
-        if (audioManager == null) {
-            audioManager = new AudioManagerService(context);
         }
     }
 
@@ -83,10 +79,6 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         if (ttsHelper != null) {
             ttsHelper.destroy();
-        }
-        if (audioManager != null) {
-            audioManager.destroy();
-            audioManager = null;
         }
     }
 }

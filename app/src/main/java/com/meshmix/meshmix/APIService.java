@@ -1,7 +1,6 @@
 package com.meshmix.meshmix;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import java.io.IOException;
@@ -40,6 +39,6 @@ class APIService extends AsyncTask<String, Void, String> {
         super.onPostExecute(s);
 
         // Do something as soon as you have response...
-        new NewsService(context).setCurrentNews(s);
+        new NewsManager(context).setCurrentNews(s);
     }
 }
