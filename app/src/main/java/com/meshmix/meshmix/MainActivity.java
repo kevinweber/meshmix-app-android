@@ -1,6 +1,8 @@
 package com.meshmix.meshmix;
 
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
+// TODO: Bug: When Spotify is running on a mobile device AND on a second device (MacBook), Spotify might not finish ducking,
+//            thus, music will not play after news are finished
 
 import android.os.Bundle;
 import android.view.MenuInflater;
@@ -12,66 +14,64 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Button;
 
-public class MainActivity extends Activity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends Activity implements View.OnClickListener {
 
     private NewstimeForeground newstimeForeground;
+
+    private List<Button> buttons;
+    private static final int[] BUTTON_IDS = {
+            R.id.speak,
+            R.id.schedule_autoplay,
+            R.id.cancel_autoplay,
+            R.id.stop_background_autoplay
+    };
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-
         newstimeForeground = new NewstimeForeground(getApplicationContext());
 
-        // Ret a reference to the button element listed in the XML layout
-        final Button speakButton = (Button) findViewById(R.id.speak);
-        // Listen for clicks
-        speakButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                handleSpeakButtonClicks(v);
-            }
-        });
-
-        final Button scheduleAutoplayButton = (Button) findViewById(R.id.schedule_autoplay);
-        scheduleAutoplayButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                scheduleAutoplay(v);
-            }
-        });
-
-        final Button stopAutoplayButton = (Button) findViewById(R.id.cancel_autoplay);
-        stopAutoplayButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                cancelAutoplay(v);
-            }
-        });
-
-        final Button stopBackgroundAutoplayButton = (Button) findViewById(R.id.stop_background_autoplay);
-        stopBackgroundAutoplayButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                stopBackgroundSpeech(v);
-            }
-        });
-
+        setContentView(R.layout.activity_main);
+        initButtons();
     }
 
-    // Respond to button clicks
-    void handleSpeakButtonClicks(View v) {
-        newstimeForeground.handleSpeech();
+    private void initButtons() {
+        buttons = new ArrayList<>(BUTTON_IDS.length);
+        for(int id : BUTTON_IDS) {
+            Button button = (Button)findViewById(id);
+            button.setOnClickListener(this); // maybe
+            buttons.add(button);
+        }
     }
 
-    void scheduleAutoplay(View v) {
-        newstimeForeground.scheduleAutoplay();
-    }
+    @Override
+    public void onClick(View v) {
 
-    void cancelAutoplay(View v) {
-        newstimeForeground.cancelAutoplay();
-    }
+        switch (v.getId()) {
 
-    void stopBackgroundSpeech(View v) {
-        newstimeForeground.stopBackgroundSpeech();
-    }
+            case R.id.speak:
+                newstimeForeground.handleSpeech();
+                break;
 
+            case R.id.schedule_autoplay:
+                newstimeForeground.scheduleAutoplay();
+                break;
+
+            case R.id.cancel_autoplay:
+                newstimeForeground.cancelAutoplay();
+                break;
+
+            case R.id.stop_background_autoplay:
+                newstimeForeground.stopBackgroundSpeech();
+                break;
+
+            default:
+                break;
+        }
+    }
 
     // SETUP MENU
     @Override

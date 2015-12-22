@@ -67,7 +67,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText(text);
+            speakText("When user triggers pause within a short time twice and audioManager has not");
         }
     }
 
@@ -81,8 +81,6 @@ public class TTSHelper {
             if (myTTS.isSpeaking()) {
                 myTTS.stop();
             }
-
-            audioManager.abandonAudioFocus();
         }
     }
 
