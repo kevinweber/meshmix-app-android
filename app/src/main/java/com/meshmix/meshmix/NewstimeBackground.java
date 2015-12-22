@@ -54,7 +54,7 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
 
     @Override
     public void onDestroy() {
-        stopSpeech();   // Seems not to work/change anything
+        Log.d("NewstimeBackground", "Object has been destroyed");
         super.onDestroy();
     }
 }

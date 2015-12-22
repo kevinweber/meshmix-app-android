@@ -38,7 +38,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
     }
 
     void gainFullTransient() {
-        int delayTTS = 2000;
+        int delayTTS = 1200;
 
         new Handler().postDelayed(new Runnable() {
             @Override

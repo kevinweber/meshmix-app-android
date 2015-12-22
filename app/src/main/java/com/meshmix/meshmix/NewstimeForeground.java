@@ -80,7 +80,6 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void destroy() {
-        // VERY IMPORTANT! This must always be called or else you will leak resources
         if (ttsHelper != null) {
             ttsHelper.destroy();
         }
