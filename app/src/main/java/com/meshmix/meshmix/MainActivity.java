@@ -1,8 +1,6 @@
 package com.meshmix.meshmix;
 
 // TODO: Handle button clicks (play music etc.) when user has no internet connection so that the app doesn't crash
-// TODO: Bug: When Spotify is running on a mobile device AND on a second device (MacBook), Spotify might not finish ducking,
-//            thus, music will not play after news are finished
 
 import android.os.Bundle;
 import android.view.MenuInflater;

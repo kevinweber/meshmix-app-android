@@ -67,7 +67,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText("When user triggers pause within a short time twice and audioManager has not");
+            speakText(text);
         }
     }
 
@@ -156,11 +156,17 @@ public class TTSHelper {
 
             @Override
             public void onStop(String utteranceId, boolean interrupted) {
+                if (audioManager != null) {
+                    audioManager.abandonAudioFocus();
+                }
                 Log.d("NewstimeForeground", "Stopped while TTS was in progress");
             }
 
             @Override
             public void onDone(String string) {
+                if (audioManager != null) {
+                    audioManager.abandonAudioFocus();
+                }
                 Log.d("NewstimeForeground", "Done");
             }
         };

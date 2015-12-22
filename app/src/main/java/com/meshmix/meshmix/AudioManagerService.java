@@ -71,7 +71,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 //                break;
 
                 Log.d("MainActivity", "1");
-
+                break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and release media player
@@ -81,6 +81,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 //                break;
 
                 Log.d("MainActivity", "2");
+                break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                 // Lost focus for a short time, but we have to stop
@@ -90,6 +91,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 //                break;
 
                 Log.d("MainActivity", "3");
+                break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 // Lost focus for a short time, but it's ok to keep playing
@@ -98,8 +100,11 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 //                break;
 
                 Log.d("MainActivity", "4");
-        }
+                break;
 
+            default:
+                break;
+        }
     }
 
     protected void abandonAudioFocus() {
