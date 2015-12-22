@@ -2,7 +2,6 @@ package com.meshmix.meshmix;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.widget.Toast;
 
 // TODO: Add Earcon (mapping between a string of text and a sound file)
@@ -44,12 +43,12 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         }
     }
 
-    protected void startAutoplay() {
-        ttsHelper.startAutoplay();
+    protected void scheduleAutoplay() {
+        ttsHelper.scheduleAutoplay();
     }
 
-    protected void stopAutoplay() {
-        ttsHelper.stopAutoplay();
+    protected void cancelAutoplay() {
+        ttsHelper.cancelAutoplay();
     }
 
     protected void stopBackgroundSpeech() {
@@ -69,9 +68,8 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     public void onInit(int initStatus) {
         if (initStatus == TextToSpeech.SUCCESS) {
             ttsStatus = initStatus;
+            ttsHelper.setup();
 
-            ttsHelper.configTTSVoice();
-            ttsHelper.setOnUtteranceProgressListener();
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
 

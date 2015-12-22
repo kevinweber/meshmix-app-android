@@ -39,13 +39,18 @@ public class TTSHelper {
         }
     }
 
-    protected void startAutoplay() {
+    protected void setup() {
+        configTTSVoice();
+        setOnUtteranceProgressListener();
+    }
+
+    protected void scheduleAutoplay() {
         if (newsManager != null) {
             newsManager.scheduleNews();
         }
     }
 
-    protected void stopAutoplay() {
+    protected void cancelAutoplay() {
         if (newsManager != null) {
             newsManager.cancelSchedule();
         }
@@ -115,7 +120,7 @@ public class TTSHelper {
         myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
-    protected void configTTSVoice() {
+    private void configTTSVoice() {
         float pitch = 0.9f;
         float speechRate = 0.9f;
 
@@ -128,7 +133,7 @@ public class TTSHelper {
         myTTS.setSpeechRate(speechRate);
     }
 
-    protected void setOnUtteranceProgressListener() {
+    private void setOnUtteranceProgressListener() {
         // http://developer.android.com/reference/android/speech/tts/UtteranceProgressListener.html
         myTTS.setOnUtteranceProgressListener(createNewUtteranceProgressListener());
     }

@@ -32,17 +32,17 @@ public class MainActivity extends Activity {
             }
         });
 
-        final Button startAutoplayButton = (Button) findViewById(R.id.start_autoplay);
-        startAutoplayButton.setOnClickListener(new View.OnClickListener() {
+        final Button scheduleAutoplayButton = (Button) findViewById(R.id.schedule_autoplay);
+        scheduleAutoplayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startAutoplay(v);
+                scheduleAutoplay(v);
             }
         });
 
-        final Button stopAutoplayButton = (Button) findViewById(R.id.stop_autoplay);
+        final Button stopAutoplayButton = (Button) findViewById(R.id.cancel_autoplay);
         stopAutoplayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                stopAutoplay(v);
+                cancelAutoplay(v);
             }
         });
 
@@ -60,12 +60,12 @@ public class MainActivity extends Activity {
         newstimeForeground.handleSpeech();
     }
 
-    void startAutoplay(View v) {
-        newstimeForeground.startAutoplay();
+    void scheduleAutoplay(View v) {
+        newstimeForeground.scheduleAutoplay();
     }
 
-    void stopAutoplay(View v) {
-        newstimeForeground.stopAutoplay();
+    void cancelAutoplay(View v) {
+        newstimeForeground.cancelAutoplay();
     }
 
     void stopBackgroundSpeech(View v) {
