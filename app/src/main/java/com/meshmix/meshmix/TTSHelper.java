@@ -85,6 +85,15 @@ public class TTSHelper {
         return myTTS.isSpeaking();
     }
 
+    protected Boolean isOtherAppPlaying() {
+        if (audioManager != null) {
+            return audioManager.isOtherAppPlaying();
+        } else {
+            Log.d("NewstimeBgService", "AudioManager is not available");
+            return false;
+        }
+    }
+
     protected void speakText(String speech) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ttsGreater21(speech);

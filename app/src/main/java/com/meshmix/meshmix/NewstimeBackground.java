@@ -44,8 +44,12 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
             ttsStatus = TextToSpeech.SUCCESS;
 
             ttsHelper.configTTSVoice();
-            ttsHelper.startSpeech();
-            ttsHelper.setOnUtteranceProgressListener();
+            if (ttsHelper.isOtherAppPlaying()) {
+                ttsHelper.startSpeech();
+                ttsHelper.setOnUtteranceProgressListener();
+            } else {
+                Log.d("NewstimeBackground", "No other app is playing audio! TTS will not start automatically in this case.");
+            }
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
             Toast.makeText(context, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();

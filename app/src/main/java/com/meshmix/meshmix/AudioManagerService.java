@@ -12,7 +12,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
     private AudioManager audioManager;
     final AudioManager.OnAudioFocusChangeListener audioContext = this;
 
-    AudioManagerService(Context context) {
+    protected AudioManagerService(Context context) {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
@@ -20,8 +20,8 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
      * Just "duck" other apps in the first step so that the switch is not to abrupt.
      * In the second step, pause them totally (gainFullTransient()).
      */
-    void pauseOtherApps() {
-        if (audioManager.isMusicActive()) {
+    protected void pauseOtherApps() {
+        if (isOtherAppPlaying()) {
             Log.d("MainActivity", "Music is active");
             int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
@@ -37,7 +37,11 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
         }
     }
 
-    void gainFullTransient() {
+    protected Boolean isOtherAppPlaying() {
+        return audioManager.isMusicActive();
+    }
+
+    private void gainFullTransient() {
         int delayTTS = 1200;
 
         new Handler().postDelayed(new Runnable() {
@@ -98,11 +102,11 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 
     }
 
-    void abandonAudioFocus() {
+    protected void abandonAudioFocus() {
         audioManager.abandonAudioFocus(this);
     }
 
-    void destroy() {
+    protected void destroy() {
         if (audioManager != null) {
             //            audioManager.release();
             abandonAudioFocus();
