@@ -50,6 +50,15 @@ public class TTSHelper {
         }
     }
 
+    /**
+     * Reschedule autoplay is called whenever the last played news have finished
+     */
+    private void reScheduleAutoplay() {
+        if (newsManager != null) {
+            newsManager.reScheduleNews();
+        }
+    }
+
     protected void cancelAutoplay() {
         if (newsManager != null) {
             newsManager.cancelSchedule();
@@ -67,7 +76,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText(text);
+            speakText("This is a test text.");
         }
     }
 
@@ -141,17 +150,17 @@ public class TTSHelper {
 
             @Override
             public void onStart(String utteranceId) {
-                Log.d("NewstimeForeground", "TTS started");
+                Log.d("TTSHelper", "TTS started");
             }
 
             @Override
             public void onError(String utteranceId) {   // Deprecated in API level 21
-                Log.d("NewstimeForeground", "Error occurred");
+                Log.d("TTSHelper", "Error occurred");
             }
 
             @Override
             public void onError(String utteranceId, int errorCode) {
-                Log.d("NewstimeForeground", "Error occurred");
+                Log.d("TTSHelper", "Error occurred");
             }
 
             @Override
@@ -159,7 +168,9 @@ public class TTSHelper {
                 if (audioManager != null) {
                     audioManager.abandonAudioFocus();
                 }
-                Log.d("NewstimeForeground", "Stopped while TTS was in progress");
+
+                reScheduleAutoplay();
+                Log.d("TTSHelper", "Stopped while TTS was in progress");
             }
 
             @Override
@@ -167,7 +178,9 @@ public class TTSHelper {
                 if (audioManager != null) {
                     audioManager.abandonAudioFocus();
                 }
-                Log.d("NewstimeForeground", "Done");
+
+                reScheduleAutoplay();
+                Log.d("TTSHelper", "Done");
             }
         };
     }

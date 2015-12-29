@@ -17,11 +17,29 @@ import java.util.Calendar;
  * The NewsManager communicates with APIService and schedules when news shall be played
  */
 public class NewsManager {
+//    protected final static String AUTOPLAY_OFF = "OFF";
+//    protected final static String AUTOPLAY_ON = "ON";
+//    protected final static String AUTOPLAY_SKIP_ONCE = "SKIP";
+    protected enum AutoplayStatus {
+        AUTOPLAY_OFF, AUTOPLAY_ON, AUTOPLAY_SKIP_ONCE;
+    }
+
     private static String CurrentNews;
     private static Context context;
     private static AlarmManager alarmManager;
     private static PendingIntent alarmIntent;
     private static Intent intent;
+    private static AutoplayStatus autoplayStatus = AutoplayStatus.AUTOPLAY_OFF;
+
+    protected static void setAutoplayStatus(AutoplayStatus e) {
+        NewsManager.autoplayStatus = e;
+    }
+
+    protected static AutoplayStatus getAutoplayStatus() {
+        return autoplayStatus;
+    }
+
+
 
     protected NewsManager(Context context) {
         this.context = context;
@@ -70,17 +88,25 @@ public class NewsManager {
 //        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
+        setAutoplayStatus(AutoplayStatus.AUTOPLAY_ON);
+
         Log.d("NewsManager", "Autoplay initialized");
 
     }
 
+    protected void reScheduleNews() {
+        if (autoplayStatus == AutoplayStatus.AUTOPLAY_ON) {
+            scheduleNews();
+        }
+    }
+
     protected void cancelSchedule() {
-         destroyAlarmManager();
+        destroyAlarmManager();
     }
 
     protected void stopBackgroundSpeech() {
         Log.d("NewstimeForeground", "Running text should be cancelled now");
-        new NewstimeBackground().stopSpeech();
+        NewstimeBackground.stopSpeech();
     }
 
     protected static String getCurrentNews() {
@@ -92,6 +118,7 @@ public class NewsManager {
     }
 
     private void destroyAlarmManager() {
+        setAutoplayStatus(AutoplayStatus.AUTOPLAY_OFF);
         if (alarmManager != null && alarmIntent != null) {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;

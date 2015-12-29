@@ -29,7 +29,7 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
         ttsHelper = new TTSHelper(myTTS, context);
     }
 
-    protected void stopSpeech() {
+    protected static void stopSpeech() {
         if (ttsHelper != null && ttsHelper.isSpeaking()) {
             Log.d("NewstimeBackground", "TTS is speaking, so start stopping...");
             ttsHelper.stopSpeech();
