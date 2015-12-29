@@ -52,7 +52,7 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void stopBackgroundSpeech() {
-        ttsHelper.stopBackgroundSpeech();
+        NewstimeBackground.stopSpeech();
     }
 
     protected void startSpeech() {

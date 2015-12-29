@@ -104,11 +104,6 @@ public class NewsManager {
         destroyAlarmManager();
     }
 
-    protected void stopBackgroundSpeech() {
-        Log.d("NewstimeForeground", "Running text should be cancelled now");
-        NewstimeBackground.stopSpeech();
-    }
-
     protected static String getCurrentNews() {
         return CurrentNews;
     }

@@ -65,18 +65,12 @@ public class TTSHelper {
         }
     }
 
-    protected void stopBackgroundSpeech() {
-        if (newsManager != null) {
-            newsManager.stopBackgroundSpeech();
-        }
-    }
-
     protected void startSpeech() {
         if (newsManager != null && newsManager != null && audioManager != null) {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText("This is a test text.");
+            speakText(text);
         }
     }
 
@@ -202,6 +196,6 @@ public class TTSHelper {
         }
 
         // TODO: Stop TTS which might be running in a background service
-//        new NewstimeBackground().stopSpeech(); // not working
+//        NewstimeBackground.stopSpeech(); // not working
     }
 }
