@@ -32,16 +32,14 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         return ttsHelper != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
     }
 
-    protected void handleSpeech(Button button) {
-        ButtonHandler buttonHandler = new ButtonHandler();
-
+    protected void handleSpeech() {
         if (isTtsInitialized()) {
             if (ttsHelper.isSpeaking()) {
                 stopSpeech();
-                buttonHandler.speechOff(button);
+                ButtonHandler.speechOff();
             } else {
                 startSpeech();
-                buttonHandler.speechOn(button);
+                ButtonHandler.speechOn();
             }
         } else {
             // TODO: Catch this different (more user friendly for production)
@@ -50,8 +48,8 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
 
-    protected void handleAutoplay(Button button) {
-        ttsHelper.handleAutoplay(button);
+    protected void handleAutoplay() {
+        ttsHelper.handleAutoplay();
     }
 
     protected void stopBackgroundSpeech() {

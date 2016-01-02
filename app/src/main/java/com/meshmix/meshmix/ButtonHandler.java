@@ -5,6 +5,7 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ButtonHandler {
     private static MainActivity mainActivity;
@@ -30,7 +31,7 @@ public class ButtonHandler {
         buttons = new ArrayList<>(BUTTON_IDS.length);
         for(int id : BUTTON_IDS) {
             Button button = (Button)mainActivity.findViewById(id);
-            button.setOnClickListener(mainActivity); // maybe
+            button.setOnClickListener(mainActivity);
             buttons.add(button);
         }
     }
@@ -40,10 +41,10 @@ public class ButtonHandler {
 
         switch (v.getId()) {
             case R.id.handle_speech:
-                newstimeForeground.handleSpeech(button);
+                newstimeForeground.handleSpeech();
                 break;
             case R.id.handle_autoplay:
-                newstimeForeground.handleAutoplay(button);
+                newstimeForeground.handleAutoplay();
                 break;
             case R.id.stop_background_autoplay:
                 newstimeForeground.stopBackgroundSpeech();
@@ -54,20 +55,53 @@ public class ButtonHandler {
     }
 
 
+    /**
+     * Some methods have to be run with the runOnUiThread method because
+     * “Only the original thread that created a view hierarchy can touch its views.”
+     * See: http://stackoverflow.com/questions/5161951/android-only-the-original-thread-that-created-a-view-hierarchy-can-touch-its-vi
+     */
+    private static void runOnUiThread(final Command command) {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                command.execute();
+            }
+        });
+    }
 
-    protected void speechOn(Button button) {
+    protected static void speechOn_OnUiThread() {
+        runOnUiThread(new Command() {
+            public void execute() {
+                speechOn();
+            }
+        });
+    }
+
+    protected static void speechOn() {
+        Button button = (Button) mainActivity.findViewById(R.id.handle_speech);
         button.setText(R.string.speech_button_on);
     }
 
-    protected void speechOff(Button button) {
+    protected static void speechOff_OnUiThread() {
+        runOnUiThread(new Command() {
+            public void execute() {
+                speechOff();
+            }
+        });
+    }
+
+    protected static void speechOff() {
+        Button button = (Button) mainActivity.findViewById(R.id.handle_speech);
         button.setText(R.string.speech_button_off);
     }
 
-    protected void autoplayOn(Button button) {
+    protected static void autoplayOn() {
+        Button button = (Button)mainActivity.findViewById(R.id.handle_autoplay);
         button.setText(R.string.autoplaystatus_button_on);
     }
 
-    protected void autoplayOff(Button button) {
+    protected static void autoplayOff() {
+        Button button = (Button)mainActivity.findViewById(R.id.handle_autoplay);
         button.setText(R.string.autoplaystatus_button_off);
     }
 }

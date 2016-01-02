@@ -45,17 +45,16 @@ public class TTSHelper {
         setOnUtteranceProgressListener();
     }
 
-    protected void handleAutoplay(Button button) {
-        ButtonHandler buttonHandler = new ButtonHandler();
+    protected void handleAutoplay() {
         AutoplayStatusEnum status = AutoplayStatus.getStatus();
 
         if (status == AutoplayStatusEnum.AUTOPLAY_OFF) {
             Log.d("TTSHelper", "handleAutoplay: OFF");
-            buttonHandler.autoplayOn(button);
+            ButtonHandler.autoplayOn();
             scheduleAutoplay();
         } else if (status == AutoplayStatusEnum.AUTOPLAY_ON) {
             Log.d("TTSHelper", "handleAutoplay: ON");
-            buttonHandler.autoplayOff(button);
+            ButtonHandler.autoplayOff();
             cancelAutoplay();
         } else {
             Log.d("TTSHelper", "handleAutoplay: [else]");
@@ -88,7 +87,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText("Every day is amazing. Live is beautiful!");
+            speakText("This app is going to be amazing.");
         }
     }
 
@@ -162,16 +161,19 @@ public class TTSHelper {
 
             @Override
             public void onStart(String utteranceId) {
+                ButtonHandler.speechOn_OnUiThread();
                 Log.d("TTSHelper", "TTS started");
             }
 
             @Override
             public void onError(String utteranceId) {   // Deprecated in API level 21
+                ButtonHandler.speechOff_OnUiThread();
                 Log.d("TTSHelper", "Error occurred");
             }
 
             @Override
             public void onError(String utteranceId, int errorCode) {
+                ButtonHandler.speechOff_OnUiThread();
                 Log.d("TTSHelper", "Error occurred");
             }
 
@@ -180,7 +182,7 @@ public class TTSHelper {
                 if (audioManager != null) {
                     audioManager.abandonAudioFocus();
                 }
-
+                ButtonHandler.speechOff_OnUiThread();
                 reScheduleAutoplay();
                 Log.d("TTSHelper", "Stopped while TTS was in progress");
             }
@@ -190,6 +192,7 @@ public class TTSHelper {
                 if (audioManager != null) {
                     audioManager.abandonAudioFocus();
                 }
+                ButtonHandler.speechOff_OnUiThread();
                 Log.d("TTSHelper", "Finished news playback");
 
                 reScheduleAutoplay();
