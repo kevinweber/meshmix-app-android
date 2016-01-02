@@ -17,12 +17,12 @@ import java.util.Calendar;
  * The NewsManager communicates with APIService and schedules when news shall be played
  */
 public class NewsManager {
-//    protected final static String AUTOPLAY_OFF = "OFF";
-//    protected final static String AUTOPLAY_ON = "ON";
-//    protected final static String AUTOPLAY_SKIP_ONCE = "SKIP";
     protected enum AutoplayStatus {
         AUTOPLAY_OFF, AUTOPLAY_ON, AUTOPLAY_SKIP_ONCE;
     }
+    private final static int NEWSTIME_WINDOW_LENGTH_MILLIS = 5000;
+    private static Calendar calendar = Calendar.getInstance();
+    private static int lastNewstimeParameter = 99;  // This parameter represents the minute (later: hour) when news shall be played. Default is an unrealistic number to simulate "null" (no integer set)
 
     private static String CurrentNews;
     private static Context context;
@@ -40,7 +40,6 @@ public class NewsManager {
     }
 
 
-
     protected NewsManager(Context context) {
         this.context = context;
     }
@@ -54,14 +53,9 @@ public class NewsManager {
 
 
     /**
-     * TODO: Implement "autoplay news every hour" feature
+     * Schedule newstime, thus the next time when this app tries to play the next news
      */
-    protected void scheduleNews() {
-        // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
-        // we fetch  the current time in milliseconds and added 1 day time
-        // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
-//        Long time = new GregorianCalendar().getTimeInMillis() + 3000;   //+24*60*60*1000;
-
+    protected static void scheduleNews() {
         if (alarmManager == null) {
             alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         }
@@ -72,31 +66,39 @@ public class NewsManager {
             alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         }
 
-        // Set the alarm to start at 8:30 a.m.
-        Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 30);
+        increaseTime();
 
-        // Fire alarm exact once; repeat firing by implementing this function into receiver
-        alarmManager.setExact(AlarmManager.RTC, // setExact requires API 19+
-                1000 * 12, alarmIntent);
+        calendar.set(Calendar.SECOND, 0);   // Reset seconds because they shall be ignored for the next playback
+//        calendar.set(Calendar.MINUTE, 0); // TODO: Reset minutes because they shall be ignored for the next playback
 
-        // With setInexactRepeating(), you have to use one of the AlarmManager interval
-        // constants--in this case, AlarmManager.INTERVAL_DAY.
-        // Use inexact repeating to drain on the battery.
-//        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-//                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
+        long nextNewstimeInMillis = calendar.getTimeInMillis();
+
+        // Fire alarm exactly once within a given time window
+        // A larger time window might allow Android battery optimizations
+        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, // setWindow and setExact require API 19+
+                nextNewstimeInMillis, NEWSTIME_WINDOW_LENGTH_MILLIS, alarmIntent);
 
         setAutoplayStatus(AutoplayStatus.AUTOPLAY_ON);
 
         Log.d("NewsManager", "Autoplay initialized");
-
     }
 
-    protected void reScheduleNews() {
+    private static void increaseTime() {
+        int increasedTimeParameter = calendar.get(Calendar.MINUTE) + 1; // Increase time by one minute // TODO: Use "HOUR" instead
+        calendar.set(Calendar.MINUTE, increasedTimeParameter); // TODO: Use "HOUR" instead
+
+        if (lastNewstimeParameter == increasedTimeParameter) {
+            increaseTime(); // Yeah, Kevin's first recursive function ¯\_(ツ)_/¯
+        } else {
+            lastNewstimeParameter = increasedTimeParameter;
+        }
+    }
+
+    protected static void reScheduleNews() {
         if (autoplayStatus == AutoplayStatus.AUTOPLAY_ON) {
             scheduleNews();
+            Log.d("NewsManager", "Rescheduled news");
         }
     }
 

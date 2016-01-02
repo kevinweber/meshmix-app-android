@@ -47,7 +47,8 @@ public class NewstimeBackground extends IntentService implements TextToSpeech.On
             if (ttsHelper.isOtherAppPlaying()) {
                 ttsHelper.startSpeech();
             } else {
-                Log.d("NewstimeBackground", "No other app is playing audio! TTS will not start automatically in this case.");
+                NewsManager.reScheduleNews();
+                Log.d("NewstimeBackground", "No other app is playing audio! TTS does not start automatically in this case.");
             }
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;

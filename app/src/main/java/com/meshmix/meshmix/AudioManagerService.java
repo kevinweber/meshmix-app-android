@@ -9,11 +9,13 @@ import android.util.Log;
  * This class manages audio streams on the user's device to play fine with this app.
  */
 public class AudioManagerService implements AudioManager.OnAudioFocusChangeListener {
-    private AudioManager audioManager;
+    private static AudioManager audioManager;
     final AudioManager.OnAudioFocusChangeListener audioContext = this;
 
     protected AudioManagerService(Context context) {
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if (audioManager == null) {
+            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        }
     }
 
     /**
