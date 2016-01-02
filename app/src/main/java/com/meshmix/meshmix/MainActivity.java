@@ -22,8 +22,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private List<Button> buttons;
     private static final int[] BUTTON_IDS = {
             R.id.speak,
-            R.id.schedule_autoplay,
-            R.id.cancel_autoplay,
+            R.id.handle_autoplay,
             R.id.stop_background_autoplay
     };
 
@@ -47,25 +46,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Button button = (Button)findViewById(v.getId());
 
         switch (v.getId()) {
-
             case R.id.speak:
                 newstimeForeground.handleSpeech();
                 break;
-
-            case R.id.schedule_autoplay:
-                newstimeForeground.scheduleAutoplay();
+            case R.id.handle_autoplay:
+                newstimeForeground.handleAutoplay(button);
                 break;
-
-            case R.id.cancel_autoplay:
-                newstimeForeground.cancelAutoplay();
-                break;
-
             case R.id.stop_background_autoplay:
                 newstimeForeground.stopBackgroundSpeech();
                 break;
-
             default:
                 break;
         }

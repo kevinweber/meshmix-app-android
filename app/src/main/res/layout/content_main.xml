@@ -25,16 +25,11 @@
             />
 
         <Button
-            android:id="@+id/schedule_autoplay"
+            android:id="@+id/handle_autoplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Schedule Autoplay" />
-
-        <Button
-            android:id="@+id/cancel_autoplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel Autoplay" />
+            android:text="@string/autoplaystatus_button_default"
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:id="@+id/stop_background_autoplay"

@@ -4,6 +4,10 @@
     <string name="feedback_link">Provide Feedback</string>
     <string name="logout_link">Logout</string>
 
+    <string name="autoplaystatus_button_default">Autoplay: off</string>
+    <string name="autoplaystatus_button_off">Autoplay: off</string>
+    <string name="autoplaystatus_button_on">Autoplay: on</string>
+
     <string name="autoplaystatus_off">Off</string>
     <string name="autoplaystatus_on">On</string>
     <string name="autoplaystatus_skip">Next news will be skipped</string>

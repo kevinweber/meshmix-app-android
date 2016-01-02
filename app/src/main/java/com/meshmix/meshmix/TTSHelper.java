@@ -6,6 +6,7 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+import android.widget.Button;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -44,7 +45,24 @@ public class TTSHelper {
         setOnUtteranceProgressListener();
     }
 
-    protected void scheduleAutoplay() {
+    protected void handleAutoplay(Button button) {
+        ButtonHandler buttonHandler = new ButtonHandler();
+        AutoplayStatusEnum status = AutoplayStatus.getStatus();
+
+        if (status == AutoplayStatusEnum.AUTOPLAY_OFF) {
+            Log.d("TTSHelper", "handleAutoplay: OFF");
+            buttonHandler.autoplayOn(button);
+            scheduleAutoplay();
+        } else if (status == AutoplayStatusEnum.AUTOPLAY_ON) {
+            Log.d("TTSHelper", "handleAutoplay: ON");
+            buttonHandler.autoplayOff(button);
+            cancelAutoplay();
+        } else {
+            Log.d("TTSHelper", "handleAutoplay: [else]");
+        }
+    }
+
+    private void scheduleAutoplay() {
         if (newsManager != null) {
             newsManager.scheduleNews();
         }
@@ -59,7 +77,7 @@ public class TTSHelper {
         }
     }
 
-    protected void cancelAutoplay() {
+    private void cancelAutoplay() {
         if (newsManager != null) {
             newsManager.cancelSchedule();
         }
@@ -78,7 +96,7 @@ public class TTSHelper {
         // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
         //            stopped other music fully, TTS will stop but music will not continue playing
 
-        Log.d("NewstimeBgService", "Stopping...");
+        Log.d("TTSHelper", "Stopping...");
 
         if (myTTS != null && audioManager != null) {
             if (myTTS.isSpeaking()) {
@@ -95,7 +113,7 @@ public class TTSHelper {
         if (audioManager != null) {
             return audioManager.isOtherAppPlaying();
         } else {
-            Log.d("NewstimeBgService", "AudioManager is not available");
+            Log.d("TTSHelper", "AudioManager is not available");
             return false;
         }
     }

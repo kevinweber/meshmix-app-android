@@ -1,13 +1,13 @@
 package com.meshmix.meshmix;
 
 public class AutoplayStatus {
-    static AutoplayStatusEnum currentStatus = AutoplayStatusEnum.AUTOPLAY_OFF;
+    private static AutoplayStatusEnum currentStatus = AutoplayStatusEnum.AUTOPLAY_OFF;
 
-    static AutoplayStatusEnum getStatus() {
+    protected static AutoplayStatusEnum getStatus() {
         return currentStatus;
     }
 
-    static void setStatus(AutoplayStatusEnum newStatus) {
+    protected static void setStatus(AutoplayStatusEnum newStatus) {
         currentStatus = newStatus;
     }
 }
