@@ -67,7 +67,15 @@ public class NewsManager {
         }
 
         calendar.setTimeInMillis(System.currentTimeMillis());
-        increaseTime();
+
+        setNextNewstime();
+
+        setAutoplayStatus(AutoplayStatus.AUTOPLAY_ON);
+        Log.d("NewsManager", "Autoplay initialized");
+    }
+
+    private static void setNextNewstime() {
+        increaseTimeParameter();
 
         calendar.set(Calendar.SECOND, 0);   // Reset seconds because they shall be ignored for the next playback
 //        calendar.set(Calendar.MINUTE, 0); // TODO: Reset minutes because they shall be ignored for the next playback
@@ -78,18 +86,14 @@ public class NewsManager {
         // A larger time window might allow Android battery optimizations
         alarmManager.setWindow(AlarmManager.RTC_WAKEUP, // setWindow and setExact require API 19+
                 nextNewstimeInMillis, NEWSTIME_WINDOW_LENGTH_MILLIS, alarmIntent);
-
-        setAutoplayStatus(AutoplayStatus.AUTOPLAY_ON);
-
-        Log.d("NewsManager", "Autoplay initialized");
     }
 
-    private static void increaseTime() {
-        int increasedTimeParameter = calendar.get(Calendar.MINUTE) + 1; // Increase time by one minute // TODO: Use "HOUR" instead
+    private static void increaseTimeParameter() {
+        int increasedTimeParameter = calendar.get(Calendar.MINUTE) + 2; // Playback: Every two minutes // TODO: Use "HOUR" instead
         calendar.set(Calendar.MINUTE, increasedTimeParameter); // TODO: Use "HOUR" instead
 
         if (lastNewstimeParameter == increasedTimeParameter) {
-            increaseTime(); // Yeah, Kevin's first recursive function ¯\_(ツ)_/¯
+            increaseTimeParameter(); // Yeah, Kevin's first recursive function ¯\_(ツ)_/¯
         } else {
             lastNewstimeParameter = increasedTimeParameter;
         }
