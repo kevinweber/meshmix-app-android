@@ -32,12 +32,16 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         return ttsHelper != null && ttsStatus == TextToSpeech.SUCCESS ? true : false;
     }
 
-    protected void handleSpeech() {
+    protected void handleSpeech(Button button) {
+        ButtonHandler buttonHandler = new ButtonHandler();
+
         if (isTtsInitialized()) {
             if (ttsHelper.isSpeaking()) {
                 stopSpeech();
+                buttonHandler.speechOff(button);
             } else {
                 startSpeech();
+                buttonHandler.speechOn(button);
             }
         } else {
             // TODO: Catch this different (more user friendly for production)

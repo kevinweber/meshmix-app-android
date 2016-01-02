@@ -16,51 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener {
-
-    private NewstimeForeground newstimeForeground;
-
-    private List<Button> buttons;
-    private static final int[] BUTTON_IDS = {
-            R.id.speak,
-            R.id.handle_autoplay,
-            R.id.stop_background_autoplay
-    };
-
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        newstimeForeground = new NewstimeForeground(getApplicationContext());
-
         setContentView(R.layout.activity_main);
-        initButtons();
-    }
 
-    private void initButtons() {
-        buttons = new ArrayList<>(BUTTON_IDS.length);
-        for(int id : BUTTON_IDS) {
-            Button button = (Button)findViewById(id);
-            button.setOnClickListener(this); // maybe
-            buttons.add(button);
-        }
+        ButtonHandler buttonHandler = new ButtonHandler(this);
+        buttonHandler.initButtons();
     }
 
     @Override
     public void onClick(View v) {
-        Button button = (Button)findViewById(v.getId());
-
-        switch (v.getId()) {
-            case R.id.speak:
-                newstimeForeground.handleSpeech();
-                break;
-            case R.id.handle_autoplay:
-                newstimeForeground.handleAutoplay(button);
-                break;
-            case R.id.stop_background_autoplay:
-                newstimeForeground.stopBackgroundSpeech();
-                break;
-            default:
-                break;
-        }
+        ButtonHandler.onClick(v);
     }
 
     // SETUP MENU
