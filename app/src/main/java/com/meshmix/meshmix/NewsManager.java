@@ -17,9 +17,6 @@ import java.util.Calendar;
  * The NewsManager communicates with APIService and schedules when news shall be played
  */
 public class NewsManager {
-    protected enum AutoplayStatus {
-        AUTOPLAY_OFF, AUTOPLAY_ON, AUTOPLAY_SKIP_ONCE;
-    }
     private final static int NEWSTIME_WINDOW_LENGTH_MILLIS = 5000;
     private static Calendar calendar = Calendar.getInstance();
     private static int lastNewstimeParameter = 99;  // This parameter represents the minute (later: hour) when news shall be played. Default is an unrealistic number to simulate "null" (no integer set)
@@ -29,16 +26,6 @@ public class NewsManager {
     private static AlarmManager alarmManager;
     private static PendingIntent alarmIntent;
     private static Intent intent;
-    private static AutoplayStatus autoplayStatus = AutoplayStatus.AUTOPLAY_OFF;
-
-    protected static void setAutoplayStatus(AutoplayStatus e) {
-        NewsManager.autoplayStatus = e;
-    }
-
-    protected static AutoplayStatus getAutoplayStatus() {
-        return autoplayStatus;
-    }
-
 
     protected NewsManager(Context context) {
         this.context = context;
@@ -70,7 +57,7 @@ public class NewsManager {
 
         setNextNewstime();
 
-        setAutoplayStatus(AutoplayStatus.AUTOPLAY_ON);
+        AutoplayStatus.setStatus(AutoplayStatusEnum.AUTOPLAY_ON);
         Log.d("NewsManager", "Autoplay initialized");
     }
 
@@ -100,7 +87,7 @@ public class NewsManager {
     }
 
     protected static void reScheduleNews() {
-        if (autoplayStatus == AutoplayStatus.AUTOPLAY_ON) {
+        if (AutoplayStatus.getStatus() == AutoplayStatusEnum.AUTOPLAY_ON) {
             scheduleNews();
             Log.d("NewsManager", "Rescheduled news");
         }
@@ -119,7 +106,7 @@ public class NewsManager {
     }
 
     private void destroyAlarmManager() {
-        setAutoplayStatus(AutoplayStatus.AUTOPLAY_OFF);
+        AutoplayStatus.setStatus(AutoplayStatusEnum.AUTOPLAY_OFF);
         if (alarmManager != null && alarmIntent != null) {
             alarmManager.cancel(alarmIntent);
             alarmManager = null;

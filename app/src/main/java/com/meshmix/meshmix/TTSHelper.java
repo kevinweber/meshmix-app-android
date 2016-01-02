@@ -70,7 +70,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText("When user triggers pause within a short time twice...");
+            speakText("Every day is amazing. Live is beautiful!");
         }
     }
 
@@ -172,9 +172,9 @@ public class TTSHelper {
                 if (audioManager != null) {
                     audioManager.abandonAudioFocus();
                 }
+                Log.d("TTSHelper", "Finished news playback");
 
                 reScheduleAutoplay();
-                Log.d("TTSHelper", "Finished news playback");
             }
         };
     }
