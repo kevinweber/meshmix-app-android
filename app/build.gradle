@@ -32,11 +32,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
 
-    // This library handles authentication and authorization
-    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta11@aar'
-
-    // This library handles music playback
-    compile 'com.spotify.sdk:spotify-player:1.0.0-beta11@aar'
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
