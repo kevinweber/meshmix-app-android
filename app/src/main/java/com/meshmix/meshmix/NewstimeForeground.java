@@ -19,6 +19,15 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static Context context;
     private static TTSHelper ttsHelper;
 
+    private Snackbar snackbar_handleSpeech = Snackbar
+            .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_LONG)
+            .setAction(R.string.hint_action_retry, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    handleSpeech();
+                }
+            });
+
     NewstimeForeground(MainActivity mainActivity) {
         this.view = mainActivity.findViewById(android.R.id.content);
         this.context = mainActivity.getApplicationContext();
@@ -34,18 +43,9 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void handleSpeech() {
-        Snackbar snackbar = Snackbar
-                .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_LONG)
-                .setAction(R.string.hint_action_retry, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        handleSpeech();
-                    }
-                });
-
         if (isTtsInitialized()) {
-            if (snackbar.isShown()) {
-                snackbar.dismiss();
+            if (snackbar_handleSpeech.isShown()) {
+                snackbar_handleSpeech.dismiss();
             }
 
             if (ttsHelper.isSpeaking()) {
@@ -56,7 +56,7 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
                 ButtonHandler.speechOn();
             }
         } else {
-            snackbar.show();
+            snackbar_handleSpeech.show();
         }
     }
 
