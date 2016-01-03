@@ -92,19 +92,17 @@ public class TTSHelper {
     }
 
     protected void stopSpeech() {
-        // TODO: Bug: When user triggers pause within a short time twice and audioManager has not
-        //            stopped other music fully, TTS will stop but music will not continue playing
-
         Log.d("TTSHelper", "Stopping...");
 
         if (myTTS != null && audioManager != null) {
             if (myTTS.isSpeaking()) {
                 myTTS.stop();
             }
+
         }
     }
 
-    protected Boolean isSpeaking() {
+    protected static Boolean isSpeaking() {
         return myTTS.isSpeaking();
     }
 

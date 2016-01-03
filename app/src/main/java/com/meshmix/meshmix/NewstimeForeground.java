@@ -36,16 +36,14 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void handleSpeech() {
-        if (snackbar_handleSpeech == null) {
-            snackbar_handleSpeech = Snackbar
-                    .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.hint_action_retry, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            handleSpeech();
-                        }
-                    });
-        }
+        snackbar_handleSpeech = Snackbar
+                .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.hint_action_retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        handleSpeech();
+                    }
+                });
 
         if (isTtsInitialized()) {
             if (snackbar_handleSpeech.isShown()) {

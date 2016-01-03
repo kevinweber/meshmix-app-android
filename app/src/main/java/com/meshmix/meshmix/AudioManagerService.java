@@ -29,7 +29,6 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
             if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                // could not get audio focus.
                 Log.d("MainActivity", "Could not get audio focus");
             } else {
                 gainFullTransient();
@@ -49,11 +48,14 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
-                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    // could not get audio focus.
-                    Log.d("MainActivity", "postDelayed; could not get audio focus");
+                // Important: Only gain full transient when TTS/news playback has not been aborted already.
+                // Else the other playing app (which has been interrupted) will not get focus back.
+                if (TTSHelper.isSpeaking()) {
+                    int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
+                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                    if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                        Log.d("MainActivity", "postDelayed; could not get audio focus");
+                    }
                 }
             }
         }, delayTTS);
