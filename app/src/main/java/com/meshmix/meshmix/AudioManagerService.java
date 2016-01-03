@@ -30,7 +30,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
 
             if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 // could not get audio focus.
-                Log.d("MainActivity", "could not get audio focus");
+                Log.d("MainActivity", "Could not get audio focus");
             } else {
                 gainFullTransient();
             }
