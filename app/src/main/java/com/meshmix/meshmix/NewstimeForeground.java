@@ -2,9 +2,8 @@ package com.meshmix.meshmix;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 // TODO: Add Earcon (mapping between a string of text and a sound file)
 // http://developer.android.com/reference/android/speech/tts/TextToSpeech.html#addEarcon(java.lang.String, java.io.File)
@@ -16,11 +15,13 @@ import android.widget.Toast;
 public class NewstimeForeground implements TextToSpeech.OnInitListener {
     private static TextToSpeech myTTS;
     private static Integer ttsStatus = -1;
+    private static View view;
     private static Context context;
     private static TTSHelper ttsHelper;
 
-    NewstimeForeground(Context context) {
-        this.context = context;
+    NewstimeForeground(MainActivity mainActivity) {
+        this.view = mainActivity.findViewById(android.R.id.content);
+        this.context = mainActivity.getApplicationContext();
 
         if (!isTtsInitialized()) {
             myTTS = new TextToSpeech(context, this);
@@ -33,7 +34,20 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
     }
 
     protected void handleSpeech() {
+        Snackbar snackbar = Snackbar
+                .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_LONG)
+                .setAction(R.string.hint_action_retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        handleSpeech();
+                    }
+                });
+
         if (isTtsInitialized()) {
+            if (snackbar.isShown()) {
+                snackbar.dismiss();
+            }
+
             if (ttsHelper.isSpeaking()) {
                 stopSpeech();
                 ButtonHandler.speechOff();
@@ -42,8 +56,7 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
                 ButtonHandler.speechOn();
             }
         } else {
-            // TODO: Catch this different (more user friendly for production)
-            Toast.makeText(context, "TTS is not loaded fully yet", Toast.LENGTH_SHORT).show();
+            snackbar.show();
         }
     }
 
@@ -74,7 +87,9 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         } else if (initStatus == TextToSpeech.ERROR) {
             ttsStatus = initStatus;
 
-            Toast.makeText(context, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
+            Snackbar snackbar = Snackbar
+                    .make(view, R.string.hint_news_failed, Snackbar.LENGTH_SHORT);
+            snackbar.show();
         }
     }
 

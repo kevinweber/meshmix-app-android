@@ -15,4 +15,8 @@
     <string name="autoplaystatus_off">Off</string>
     <string name="autoplaystatus_on">On</string>
     <string name="autoplaystatus_skip">Next news will be skipped</string>
+
+    <string name="hint_action_retry">Retry</string>
+    <string name="hint_news_not_loaded_yet">News not loaded yet</string>
+    <string name="hint_news_failed">News playback failed</string>
 </resources>

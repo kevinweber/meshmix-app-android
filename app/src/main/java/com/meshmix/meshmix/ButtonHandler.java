@@ -20,7 +20,7 @@ public class ButtonHandler {
     ButtonHandler(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         if (newstimeForeground == null) {
-            newstimeForeground = new NewstimeForeground(mainActivity.getApplicationContext());
+            newstimeForeground = new NewstimeForeground(mainActivity);
         }
     }
 
