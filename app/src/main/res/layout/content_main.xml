@@ -14,9 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/linearLayout"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_centerInParent="true">
 
         <com.joanzapata.iconify.widget.IconButton android:id="@+id/handle_speech"
             android:text="@string/speech_button_default"
@@ -28,24 +29,17 @@
             android:layout_width="160dp"
             android:layout_height="160dp"
 
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/rounded_button_primary"
-            />
+            android:layout_gravity="center"
+            android:background="@drawable/rounded_button_primary" />
 
         <Button
             android:id="@+id/handle_autoplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/autoplaystatus_button_default"
-            android:layout_gravity="center_horizontal"/>
-
-        <Button
-            android:id="@+id/stop_background_autoplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop running TTS that has been started automatically"
-            android:layout_gravity="center_horizontal"/>
-
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="10dp" />
     </LinearLayout>
 
 </RelativeLayout>

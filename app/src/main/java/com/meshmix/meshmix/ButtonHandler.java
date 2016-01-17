@@ -13,8 +13,7 @@ public class ButtonHandler {
     private List<Button> buttons;
     private static final int[] BUTTON_IDS = {
             R.id.handle_speech,
-            R.id.handle_autoplay,
-            R.id.stop_background_autoplay
+            R.id.handle_autoplay
     };
 
     ButtonHandler(MainActivity mainActivity) {
@@ -36,17 +35,12 @@ public class ButtonHandler {
     }
 
     protected static void onClick(View v) {
-        Button button = (Button)mainActivity.findViewById(v.getId());
-
         switch (v.getId()) {
             case R.id.handle_speech:
                 newstimeForeground.handleSpeech();
                 break;
             case R.id.handle_autoplay:
                 newstimeForeground.handleAutoplay();
-                break;
-            case R.id.stop_background_autoplay:
-                newstimeForeground.stopBackgroundSpeech();
                 break;
             default:
                 break;

@@ -67,10 +67,6 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
         ttsHelper.handleAutoplay();
     }
 
-    protected void stopBackgroundSpeech() {
-        NewstimeBackground.stopSpeech();
-    }
-
     protected void startSpeech() {
         ttsHelper.startSpeech();
     }
