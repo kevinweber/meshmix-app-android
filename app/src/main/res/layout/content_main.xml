@@ -18,31 +18,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button android:id="@+id/handle_speech"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/speech_button_default"
-            android:layout_gravity="center_horizontal"/>
-
-        <Button android:id="@+id/handle_speech_circle"
+        <com.joanzapata.iconify.widget.IconButton android:id="@+id/handle_speech"
             android:text="@string/speech_button_default"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
+            android:textSize="60sp"
             android:scaleType="center"
             android:adjustViewBounds="true"
 
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
 
             android:layout_gravity="center_horizontal"
             android:background="@drawable/rounded_button_primary"
             />
-
-        <!--android:contentDescription="@string/play_button"-->
-        <!--android:adjustViewBounds="false"-->
-        <!--android:foregroundGravity="center_horizontal"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:textAlignment="center"-->
 
         <Button
             android:id="@+id/handle_autoplay"

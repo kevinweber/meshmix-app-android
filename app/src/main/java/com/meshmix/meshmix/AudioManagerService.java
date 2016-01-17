@@ -111,6 +111,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
         }
     }
 
+    // TODO/Bug: Spotify doesn't gain focus back (when it is supposed to) when the user is using Spotify on multiple devices
     protected void abandonAudioFocus() {
         audioManager.abandonAudioFocus(this);
     }

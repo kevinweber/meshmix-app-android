@@ -1,7 +1,5 @@
 package com.meshmix.meshmix;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,7 +13,6 @@ public class ButtonHandler {
     private List<Button> buttons;
     private static final int[] BUTTON_IDS = {
             R.id.handle_speech,
-            R.id.handle_speech_circle,
             R.id.handle_autoplay,
             R.id.stop_background_autoplay
     };
@@ -43,9 +40,6 @@ public class ButtonHandler {
 
         switch (v.getId()) {
             case R.id.handle_speech:
-                newstimeForeground.handleSpeech();
-                break;
-            case R.id.handle_speech_circle:
                 newstimeForeground.handleSpeech();
                 break;
             case R.id.handle_autoplay:
@@ -86,9 +80,6 @@ public class ButtonHandler {
     protected static void speechOn() {
         Button button = (Button) mainActivity.findViewById(R.id.handle_speech);
         button.setText(R.string.speech_button_on);
-
-        button = (Button) mainActivity.findViewById(R.id.handle_speech_circle);
-        button.setText(R.string.speech_button_on);
     }
 
     protected static void speechOff_OnUiThread() {
@@ -101,9 +92,6 @@ public class ButtonHandler {
 
     protected static void speechOff() {
         Button button = (Button) mainActivity.findViewById(R.id.handle_speech);
-        button.setText(R.string.speech_button_off);
-
-        button = (Button) mainActivity.findViewById(R.id.handle_speech_circle);
         button.setText(R.string.speech_button_off);
     }
 

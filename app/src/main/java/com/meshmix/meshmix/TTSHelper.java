@@ -87,7 +87,7 @@ public class TTSHelper {
             audioManager.pauseOtherApps();
 
             String text = newsManager.getCurrentNews();
-            speakText("This app is going to be amazing, really. Wow, we need more text.");  // Make sure that a
+            speakText("This app is going to be amazing.");  // Make sure that a
         }
     }
 

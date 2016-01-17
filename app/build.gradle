@@ -35,4 +35,7 @@ dependencies {
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+
+    // More icon fonts on https://github.com/JoanZapata/android-iconify
+    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.1' // (v4.5)
 }

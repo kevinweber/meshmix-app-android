@@ -4,9 +4,9 @@
     <string name="feedback_link">Provide Feedback</string>
     <string name="logout_link">Logout</string>
 
-    <string name="speech_button_default">Start</string>
-    <string name="speech_button_off">Start</string>
-    <string name="speech_button_on">Stop</string>
+    <string name="speech_button_default">{fa-play}</string>
+    <string name="speech_button_off">{fa-play}</string>
+    <string name="speech_button_on">{fa-stop}</string>
 
     <string name="autoplaystatus_button_default">Autoplay is off</string>
     <string name="autoplaystatus_button_off">Autoplay is off</string>

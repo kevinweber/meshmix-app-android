@@ -13,12 +13,18 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Button;
 
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initializing icon font from https://github.com/JoanZapata/android-iconify
+        Iconify.with(new FontAwesomeModule());
 
         setContentView(R.layout.activity_main);
 
