@@ -26,7 +26,7 @@ public class AudioManagerService implements AudioManager.OnAudioFocusChangeListe
         if (isOtherAppPlaying()) {
             Log.d("MainActivity", "Music is active");
             int result = audioManager.requestAudioFocus(audioContext, AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
             if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 Log.d("MainActivity", "Could not get audio focus");

@@ -37,7 +37,7 @@ public class NewstimeForeground implements TextToSpeech.OnInitListener {
 
     protected void handleSpeech() {
         snackbar_handleSpeech = Snackbar
-                .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_INDEFINITE)
+                .make(view, R.string.hint_news_not_loaded_yet, Snackbar.LENGTH_LONG)
                 .setAction(R.string.hint_action_retry, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

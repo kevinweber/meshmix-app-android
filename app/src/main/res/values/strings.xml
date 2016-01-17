@@ -8,9 +8,9 @@
     <string name="speech_button_off">Start</string>
     <string name="speech_button_on">Stop</string>
 
-    <string name="autoplaystatus_button_default">Autoplay: off</string>
-    <string name="autoplaystatus_button_off">Autoplay: off</string>
-    <string name="autoplaystatus_button_on">Autoplay: on</string>
+    <string name="autoplaystatus_button_default">Autoplay is off</string>
+    <string name="autoplaystatus_button_off">Autoplay is off</string>
+    <string name="autoplaystatus_button_on">Autoplay is on</string>
 
     <string name="autoplaystatus_off">Off</string>
     <string name="autoplaystatus_on">On</string>
@@ -19,4 +19,7 @@
     <string name="hint_action_retry">Retry</string>
     <string name="hint_news_not_loaded_yet">News not loaded yet</string>
     <string name="hint_news_failed">News playback failed</string>
+
+    <string name="play">Button</string>
+    <string name="play_button">Play button</string>
 </resources>
